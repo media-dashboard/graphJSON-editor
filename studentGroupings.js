@@ -94,7 +94,8 @@ ClassRoom.prototype.getStudent = function(id){
   return this.body[id];
 };
 ClassRoom.prototype.addStudent = function(raw){
-  // return a new ClassRoom with student added
+  // TODO: rebuild as 'makeStudents', to differentiate between adding students that already exist, and building new Students from raw
+  // return a new ClassRoom with a student added, and any new students that that student loves/hates
   var id = raw[0],
       lovers = raw[1],
       haters = raw[2];
@@ -134,6 +135,14 @@ var raw = [
   [5, [2], [4]],
   [6, [2], []],
 ];
+
+// refactor: this is quite similar to what's going on in ClassRoom.addStudent()
+var classroom = new ClassRoom()
+
+raw.each(function(rawStudent){
+  // this should be refactored to not have side effects (try changing ClassRoom.addStudent() to accept multiple input, like Group.addStudents())
+  classroom = classroom.addStudent(rawStudent);
+})
 
 
 
