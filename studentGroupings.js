@@ -14,17 +14,39 @@ _.contains = function(list, value){
 }
 
 // Objects
-var Student = function(id, lovers, haters){
+var Student = function(id, lovers, haters, classroom){
   this.id = id;
   this.lovers = lovers || [];
   this.haters = haters || [];
+  this.classroom = classroom;
 };
 Student.prototype.loves = function(){
   var loverIds = Array.prototype.slice.call(arguments);
-  var lovers = loverIdx.map(function(loverId){
-    return ClassRoom.
+  var lovers = loverIds.map(function(loverId){
+    if(ClassRoom.hasStudent(loverId)){
+      return this.classroom.getStudent(loverId);
+    }
+    // if loverId doesn't exist, add a new Student to ClassRoom and return it
+    var newStudent = new Student(loverId, [], [], this.classroom);
+      // TOFIX: this creates a new classroom for this student, but all other students will have the old classroom
+    this.classroom = this.classroom.addStudent(newStudent);
+    return newStudent;
   });
   return new Student(this.id, lovers, this.haters);
+};
+Student.prototype.hates = function(){
+  var haterIds = Array.prototype.slice.call(arguments);
+  var haters = haterIds.map(function(haterId){
+    if(ClassRoom.hasStudent(haterId)){
+      return this.classroom.getStudent(haterId);
+    }
+    // if haterId doesn't exist, add a new Student to ClassRoom and return it
+    var newStudent = new Student(haterId, [], [], this.classroom);
+      // TOFIX: this creates a new classroom for this student, but all other students will have the old classroom
+    this.classroom = this.classroom.addStudent(newStudent);
+    return newStudent;
+  });
+  return new Student(this.id, this.lovers, haters);
 };
 
 
@@ -113,14 +135,5 @@ var raw = [
   [6, [2], []],
 ];
 
-function buildClassroom(raw, idx, result){
-  if(raw[idx]){
 
-  }
-  return result;
-};
-
-var students = _.each(raw, function(rawStudent){
-
-})
 
