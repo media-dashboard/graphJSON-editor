@@ -1,17 +1,5 @@
 // helpers
-_ = {};
-_.flatten = function(nestedArray, result) {
-  result = result || [];
-
-  if(! Array.isArray(nestedArray)){ return nestedArray; }
-  nestedArray.forEach(function(item){
-    result = result.concat(flatten(item));
-  });
-  return result;
-};
-_.contains = function(list, value){
-  return list.indexOf(value) !== -1;
-}
+var _ = require('underscore');
 
 // Objects
 var Student = function(id, lovers, haters, classroom){
