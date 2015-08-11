@@ -1,5 +1,6 @@
 // helpers
 var _ = require('underscore');
+var graph = require('./graph');
 
 // Objects
 var Student = function(id, lovers, haters, classroom){

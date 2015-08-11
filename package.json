@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jameslaneconkling/happyClassroom#readme",
   "dependencies": {
+    "d3": "^3.5.6",
     "underscore": "^1.8.3"
   }
 }
