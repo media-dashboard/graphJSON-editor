@@ -1,5 +1,11 @@
-var g = require('./graph');
+var $ = require('jquery');
+var Backbone = require('backbone');  Backbone.$ = $;
 var _ = require('underscore');
+
+var Graph = require('./models/graph');
+var Node = require('./models/node');
+var Edge = require('./models/edge');
+
 
 // build classroom
 var raw = [
@@ -12,22 +18,22 @@ var raw = [
   { id: 6, lovers: [2], haters: [] },
 ];
 
-var classRoom = new g.Graph();
+var classRoom = new Graph();
 
 raw.map(function(rawStudent){
   // create student, unless otherwise exists
-  var student = classRoom.hasNode(rawStudent.id) ? classRoom.getNode(rawStudent.id) : new g.Node({ id: rawStudent.id }).addToGraph(classRoom);
+  var student = classRoom.hasNode(rawStudent.id) ? classRoom.getNode(rawStudent.id) : new Node({ id: rawStudent.id }).addToGraph(classRoom);
   
   rawStudent.lovers.forEach(function(loverId){
     // get lover if exists, otherwise create
-    var lover = classRoom.hasNode(loverId) ? classRoom.getNode(loverId) : new g.Node({ id: loverId }).addToGraph(classRoom);
-    var edge = new g.Edge(this, lover, {attraction: 1}).addToGraph(classRoom);
+    var lover = classRoom.hasNode(loverId) ? classRoom.getNode(loverId) : new Node({ id: loverId }).addToGraph(classRoom);
+    var edge = new Edge(this, lover, {attraction: 1}).addToGraph(classRoom);
     student.addEdge(edge);
   });
   rawStudent.haters.forEach(function(haterId){
     // get lover if exists, otherwise create
-    var hater = classRoom.hasNode(haterId) ? classRoom.getNode(haterId) : new g.Node({ id: haterId }).addToGraph(classRoom);
-    var edge = new g.Edge(this, hater, {attraction: -1}).addToGraph(classRoom);
+    var hater = classRoom.hasNode(haterId) ? classRoom.getNode(haterId) : new Node({ id: haterId }).addToGraph(classRoom);
+    var edge = new Edge(this, hater, {attraction: -1}).addToGraph(classRoom);
     student.addEdge(edge);
   });
 });

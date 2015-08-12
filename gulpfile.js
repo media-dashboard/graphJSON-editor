@@ -12,7 +12,7 @@ var assign = require('lodash.assign');
 
 // add custom browserify options here
 var customOpts = {
-  entries: ['./src/index.js'],
+  entries: ['./app.js'],
   debug: true
 };
 var opts = assign({}, watchify.args, customOpts);
@@ -36,7 +36,7 @@ function bundle() {
     .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
        // Add transformation tasks to the pipeline here.
     .pipe(sourcemaps.write('./')) // writes .map file
-    .pipe(gulp.dest('./script'));
+    .pipe(gulp.dest('./'));
 }
 
 
