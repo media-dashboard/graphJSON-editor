@@ -31,3 +31,31 @@ raw.map(function(rawStudent){
     student.addEdge(edge);
   });
 });
+
+
+var summarize = function(){
+  _.chain(classRoom.getNodes()).each(function(student, id){
+    function getAttractions(student, attractionVal){
+      return _.chain(student.getEdges()).filter(function(edge){ 
+          return edge.get('attraction') === attractionVal;
+        }).map(function(edge){
+          return edge.getEndNode().get('id');
+        }).value();
+    }
+
+    var lovers = getAttractions(student, 1),
+        haters =  getAttractions(student, -1);
+
+    if(lovers.length > 0){
+      console.log("Student " + id + " loves " + lovers.join());
+    }else{
+      console.log("Student " + id + " is loveless");
+    }
+    if(haters.length > 0){
+      console.log("Student " + id + " hates " + haters.join());
+    }else{
+      console.log("Student " + id + " is free of hate");
+    }
+  });
+};
+summarize();

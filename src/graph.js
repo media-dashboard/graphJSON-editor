@@ -17,6 +17,9 @@ Graph.prototype.hasNode = function(id){
 Graph.prototype.getNode = function(id){
   return this._nodes[id];
 };
+Graph.prototype.getNodes = function(){
+  return this._nodes;
+};
 Graph.prototype.getEdges = function(){
   return this._edges;
 };
