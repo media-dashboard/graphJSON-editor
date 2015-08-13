@@ -9,15 +9,26 @@
 </head>
 <body>
   <script>
-    var rawStudents = [
-      // [id, [lovers], [haters]]
-      { id: 1, lovers: [2], haters: [] },
-      { id: 2, lovers: [1], haters: [] },
-      { id: 3, lovers: [ ], haters: [1,4] },
-      { id: 4, lovers: [3], haters: [] },
-      { id: 5, lovers: [2], haters: [4] },
-      { id: 6, lovers: [2], haters: [] },
-    ];
+    var rawStudents = {
+      "nodes": [
+        { "id" : 1 },
+        { "id" : 2 },
+        { "id" : 3 },
+        { "id" : 4 },
+        { "id" : 5 },
+        { "id" : 6 },
+      ],
+      "edges": [
+        { "source": 1, "target": 2, "attraction": 1 },
+        { "source": 2, "target": 1, "attraction": 1 },
+        { "source": 3, "target": 1, "attraction": -1 },
+        { "source": 3, "target": 4, "attraction": -1 },
+        { "source": 4, "target": 6, "attraction": 1 },
+        { "source": 5, "target": 2, "attraction": 1 },
+        { "source": 5, "target": 4, "attraction": -1 },
+        { "source": 6, "target": 2, "attraction": 1 },
+      ]
+    }
   </script>
   <script src="bundle.js"></script>
 </body>
