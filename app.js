@@ -18,13 +18,21 @@ var App = Backbone.Model.extend({
       rawStudent.lovers.forEach(function(loverId){
         // get lover if exists, otherwise create
         var lover = classRoom.hasNode(loverId) ? classRoom.getNode(loverId) : new Node({ id: loverId }).addToGraph(classRoom);
-        var edge = new Edge(student, lover, {attraction: 1}).addToGraph(classRoom);
+        var edge = new Edge({
+          startNode: student, 
+          endNode: lover,
+          attraction: 1
+        }).addToGraph(classRoom);
         student.addEdge(edge);
       });
       rawStudent.haters.forEach(function(haterId){
         // get lover if exists, otherwise create
         var hater = classRoom.hasNode(haterId) ? classRoom.getNode(haterId) : new Node({ id: haterId }).addToGraph(classRoom);
-        var edge = new Edge(student, hater, {attraction: -1}).addToGraph(classRoom);
+        var edge = new Edge({
+          startNode: student, 
+          endNode: hater,
+          attraction: -1
+        }).addToGraph(classRoom);
         student.addEdge(edge);
       });
     }.bind(this));
@@ -32,17 +40,17 @@ var App = Backbone.Model.extend({
   },
 
   summarize: function(){
-    _.each(this.classRoom.getNodes(), function(student, id){
+    _.each(this.classRoom.get('nodes'), function(student, id){
       function getAttractions(student, attractionVal){
-        return _.chain(student.getEdges()).filter(function(edge){ 
+        return _.chain(student.get('edges')).filter(function(edge){ 
             return edge.get('attraction') === attractionVal;
           }).map(function(edge){
-            return edge.getEndNode().get('id');
+            return edge.get('endNode').get('id');
           }).value();
       }
 
       var lovers = getAttractions(student, 1),
-          haters =  getAttractions(student, -1);
+          haters = getAttractions(student, -1);
 
       if(lovers.length > 0){
         console.log("Student " + id + " loves " + lovers.join());
@@ -60,3 +68,4 @@ var App = Backbone.Model.extend({
 });
 
 window.app = new App();
+window._ = _;
