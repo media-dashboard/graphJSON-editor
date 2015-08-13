@@ -31,25 +31,16 @@ var Graph = Backbone.Model.extend({
     
     // adding newEdge to sourceNode allows for 'forward tracking':
       // track a node to any node it connects to
-    sourceNode.get('edges').add(newEdge);
+    sourceNode.get('outEdges').add(newEdge);
     // NOTE: adding newEdge to targetNode would allow for 'backtracking' (currently disabled): 
       // track a node to any node that connects to it
-    // targetNode.get('edges').add(newEdge);
+    targetNode.get('inEdges').add(newEdge);
     this.get('edges').add(newEdge);
     return newEdge;
   },
 
   summarize: function(){
     this.get('nodes').each(function(node){
-      function getAttractions(node, attractionVal){ 
-        return node.get('edges')
-          .filter(function(edge){ 
-            return edge.get('attraction') === attractionVal; 
-          }).map(function(edge){
-            return edge.get('targetNode').get('id');
-          });
-      }
-
       var lovers = getAttractions(node, 1),
           haters = getAttractions(node, -1);
 
@@ -63,7 +54,17 @@ var Graph = Backbone.Model.extend({
       }else{
         console.log("Node " + node.get('id') + " is free of hate");
       }
-    });    
+    });
+
+    function getAttractions(node, attractionVal){
+      return node.get('outEdges')
+        .filter(function(edge){
+          return edge.get('attraction') === attractionVal; 
+            return edge.get('attraction') === attractionVal;
+        }).map(function(edge){
+          return edge.get('targetNode').get('id');
+        });
+    }
   }
 
 });

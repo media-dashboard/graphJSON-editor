@@ -3,7 +3,12 @@ var Edges = require('../collection/edges');
 
 var Node = Backbone.Model.extend({
   initialize: function(){
-    this.set('edges', new Edges());
+    // outEdges originate from this node and lead to another node
+      // to allow for forward tracking
+    this.set('outEdges', new Edges());
+    // inEdges originate from other nodes and lead to this one
+      // to allow for back tracking
+    this.set('inEdges', new Edges());
   },
 
   validate: function(attrs, options){
