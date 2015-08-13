@@ -7,3 +7,12 @@
 
 * Model-View bindings:
   * [Backbone.stickit](https://nytimes.github.io/backbone.stickit/)
+
+* templates:
+  * handlebars w/ hbsfy
+
+* order of instantiating app:
+  * should a model instantiate a view, or vice versa
+  * AppView -> App -> GraphView -> Graph
+  * or AppView -> App -> GraphView & Graph
+  * or App -> AppView, App -> Graph -> GraphView

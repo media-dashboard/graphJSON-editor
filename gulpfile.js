@@ -12,7 +12,7 @@ var assign = require('lodash.assign');
 
 // add custom browserify options here
 var customOpts = {
-  entries: ['./app.js'],
+  entries: ['./script.js'],
   debug: true
 };
 var opts = assign({}, watchify.args, customOpts);

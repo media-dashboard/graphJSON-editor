@@ -4,10 +4,12 @@ var Node = require('./models/node');
 var Edge = require('./models/edge');
 var Nodes = require('./collections/nodes');
 var Edges = require('./collections/edges');
+var App = require('./models/app');
+var AppView = require('./views/appView');
 
 // DEV
 _.extend(window, {
-  app: new Graph(),
+  appView: new AppView({ model: new App() }),
   '_': _,
   Node: Node,
   Edge: Edge,
@@ -16,5 +18,7 @@ _.extend(window, {
   Edges: Edges
 });
 
+window.app = window.appView.model;
+
 // PRODUCTION
-// window.app = new Graph();
+// window.appView = new AppView({ model: new App(); });
