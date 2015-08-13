@@ -2,8 +2,8 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 var Node = require('./node');
 var Edge = require('./edge');
-var Nodes = require('../collection/nodes');
-var Edges = require('../collection/edges');
+var Nodes = require('../collections/nodes');
+var Edges = require('../collections/edges');
 
 var Graph = Backbone.Model.extend({
   initialize: function(){

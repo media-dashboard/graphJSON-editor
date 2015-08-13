@@ -1,5 +1,5 @@
 var Backbone = require('backbone');
-var Edges = require('../collection/edges');
+var Edges = require('../collections/edges');
 
 var Node = Backbone.Model.extend({
   initialize: function(){

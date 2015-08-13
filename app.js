@@ -2,8 +2,8 @@ var _ = require('underscore');
 var Graph = require('./models/graph');
 var Node = require('./models/node');
 var Edge = require('./models/edge');
-var Nodes = require('./collection/nodes');
-var Edges = require('./collection/edges');
+var Nodes = require('./collections/nodes');
+var Edges = require('./collections/edges');
 
 // DEV
 _.extend(window, {
