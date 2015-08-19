@@ -11,7 +11,7 @@ var Graph = Backbone.Model.extend({
     this.set('edges', new Edges());
     raw.nodes.forEach(this.addNode.bind(this));
     raw.edges.forEach(this.addEdge.bind(this));
-    this.summarize();
+    // this.summarize();
   },
 
   addNode: function(nodeJSON){

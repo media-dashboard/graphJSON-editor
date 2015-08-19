@@ -2,7 +2,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
 
-var GraphView = Backbone.View.extend({
+var AppView = Backbone.View.extend({
   el: '#app',
 
   initialize: function(){
@@ -10,8 +10,8 @@ var GraphView = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.append(this.model.graphView.render());
+    this.$el.append(this.model.graphView.el);
   }
 });
 
-module.exports = GraphView;
+module.exports = AppView;
