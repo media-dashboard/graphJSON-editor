@@ -16,3 +16,13 @@
   * AppView -> App -> GraphView -> Graph
   * or AppView -> App -> GraphView & Graph
   * or App -> AppView, App -> Graph -> GraphView
+
+
+script.js
+  |
+  |----App
+  |     |----Graph
+  |           |----Nodes
+  |           |----Edges
+  |----AppView
+        |----GraphView

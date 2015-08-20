@@ -1,5 +1,6 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
+var d3 = require('d3');
 var Node = require('./node');
 var Edge = require('./edge');
 var Nodes = require('../collections/nodes');
@@ -9,9 +10,7 @@ var Graph = Backbone.Model.extend({
   initialize: function(){
     this.set('nodes', new Nodes());
     this.set('edges', new Edges());
-    raw.nodes.forEach(this.addNode.bind(this));
-    raw.edges.forEach(this.addEdge.bind(this));
-    // this.summarize();
+    this.load('../data/miserables.json');
   },
 
   addNode: function(nodeJSON){
@@ -24,8 +23,8 @@ var Graph = Backbone.Model.extend({
     // will try to match edgeJSON.source to node.id, then to node index
     var newEdge = new Edge(edgeJSON),
         nodes = this.get('nodes'),
-        sourceNode = nodes.findWhere({ id: edgeJSON.source }) || this.at(edgeJSON.source),
-        targetNode = nodes.findWhere({ id: edgeJSON.target }) || this.at(edgeJSON.source);
+        sourceNode = nodes.findWhere({ id: edgeJSON.source }) || nodes.at(edgeJSON.source),
+        targetNode = nodes.findWhere({ id: edgeJSON.target }) || nodes.at(edgeJSON.source);
         
     newEdge.set('sourceNode', sourceNode);
     newEdge.set('targetNode', targetNode);
@@ -38,6 +37,14 @@ var Graph = Backbone.Model.extend({
     targetNode.get('inEdges').add(newEdge);
     this.get('edges').add(newEdge);
     return newEdge;
+  },
+
+  load: function(file){
+    d3.json(file, function(err, json){
+
+      json.nodes.forEach(this.addNode.bind(this));
+      json.links.forEach(this.addEdge.bind(this));
+    }.bind(this));
   },
 
   summarize: function(){

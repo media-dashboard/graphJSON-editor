@@ -13,6 +13,17 @@ var GraphView = Backbone.View.extend({
         width: d3.select('#app').style('width')
       });
 
+    // NOTE: this doesn't work, b/c the graph model doesn't register changes to it's nodes/edges collections
+      // how to have these events propagate?
+    // this.listenTo(this.model, 'update', function(graph){
+    this.listenTo(this.model.get('nodes'), 'update', _.throttle(this.render, 500, { leading: false }) );
+    this.listenTo(this.model.get('edges'), 'update', _.throttle(this.render, 500, { leading: false }) );
+
+  },
+
+  d3el: d3.select(this.el),
+
+  render: function(){
     var nodes = this.model.get('nodes').asNodes(),
         links = this.model.get('edges').asLinks()
 
@@ -20,13 +31,13 @@ var GraphView = Backbone.View.extend({
       .nodes(nodes)
       .links(links)
       .size([600, 400])
-      .linkStrength(0.1)
-      .friction(0.9)
-      .linkDistance(20)
-      .charge(-30)
-      .gravity(0.1)
-      .theta(0.8)
-      .alpha(0.1)
+      // .linkStrength(0.1)
+      // .friction(0.9)
+      .linkDistance(40)
+      .charge(-120)
+      // .gravity(0.1)
+      // .theta(0.8)
+      // .alpha(0.1)
       .start();
 
     var link = this.svg.selectAll(".link")
@@ -53,12 +64,6 @@ var GraphView = Backbone.View.extend({
       node.attr("cx", function(d) { return d.x; })
           .attr("cy", function(d) { return d.y; });
     });
-
-  },
-
-  d3el: d3.select(this.el),
-
-  render: function(){
   }
 });
 
