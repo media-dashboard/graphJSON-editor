@@ -33,7 +33,8 @@ var GraphView = Backbone.View.extend({
         .data(links)
       .enter().append("line")
         .attr("class", "link")
-        .style("stroke-width", 2);
+        .style("stroke", 'black')
+        .style("stroke-width", 1);
 
     var node = this.svg.selectAll(".node")
         .data(nodes)

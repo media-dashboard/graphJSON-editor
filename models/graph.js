@@ -21,10 +21,11 @@ var Graph = Backbone.Model.extend({
   },
 
   addEdge: function(edgeJSON){
+    // will try to match edgeJSON.source to node.id, then to node index
     var newEdge = new Edge(edgeJSON),
-        // TODO: collection.findWhere() vs. collection.get()
-        sourceNode = this.get('nodes').findWhere({ id: edgeJSON.source }),
-        targetNode = this.get('nodes').findWhere({ id: edgeJSON.target });
+        nodes = this.get('nodes'),
+        sourceNode = nodes.findWhere({ id: edgeJSON.source }) || this.at(edgeJSON.source),
+        targetNode = nodes.findWhere({ id: edgeJSON.target }) || this.at(edgeJSON.source);
         
     newEdge.set('sourceNode', sourceNode);
     newEdge.set('targetNode', targetNode);
