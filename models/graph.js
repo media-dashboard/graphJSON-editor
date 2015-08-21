@@ -44,6 +44,7 @@ var Graph = Backbone.Model.extend({
 
       json.nodes.forEach(this.addNode.bind(this));
       json.links.forEach(this.addEdge.bind(this));
+      this.trigger('load');
     }.bind(this));
   },
 
