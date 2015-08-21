@@ -6,17 +6,20 @@ var GraphView = Backbone.View.extend({
   id: 'graph',
 
   initialize: function(){
+    var height = d3.select('#app').style('height'),
+        width = d3.select('#app').style('width');
+
     this.d3el = d3.select(this.el);
 
     this.svg = this.d3el
       .append("svg")
       .attr({
-        height: d3.select('#app').style('height'),
-        width: d3.select('#app').style('width')
+        height: height,
+        width: width
       });
 
     this.force = d3.layout.force()
-      .size([600, 400])
+      .size([parseInt(width), parseInt(height)])
       .linkStrength(0.1)
       .friction(0.9)
       .linkDistance(80)
@@ -37,7 +40,7 @@ var GraphView = Backbone.View.extend({
   },
 
   reRender: function(){
-    this.d3el.select('svg').selectAll('*').remove();
+    this.svg.selectAll('*').remove();
     this.render();
   },
 

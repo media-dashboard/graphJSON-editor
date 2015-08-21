@@ -17,7 +17,7 @@
   * or AppView -> App -> GraphView & Graph
   * or App -> AppView, App -> Graph -> GraphView
 
-
+```
 script.js
   |
   |----App
@@ -26,3 +26,4 @@ script.js
   |           |----Edges
   |----AppView
         |----GraphView
+```
