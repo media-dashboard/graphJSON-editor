@@ -1,6 +1,7 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
+var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.View.extend({
   id: 'graph',
@@ -13,10 +14,11 @@ var GraphView = Backbone.View.extend({
 
     this.svg = this.d3el
       .append("svg")
-      .attr({
-        height: height,
-        width: width
-      });
+      .style({
+        height: '100%',
+        width: '100%'
+      })
+      .call(d3Util.zoom.bind(this).call());
 
     this.force = d3.layout.force()
       .size([parseInt(width), parseInt(height)])
