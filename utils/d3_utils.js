@@ -8,16 +8,9 @@ module.exports = {
   //     + ')scale(' + d3.event.scale + ')');
   // }
   zoom: function(){
-    var zoomHandler = function(){
-      this.svg.style({
-        'transform': 'scale(' + d3.event.scale + ')',
-        // 'transform': 'scale(' + d3.event.scale + ') translate(' + (d3.event.scale -1)*(100) + '%, ' + (d3.event.scale -1)*(100) + '%)',
-        // 'height': 100 / d3.event.scale + '%',
-        // 'width': 100 / d3.event.scale + '%'
-      });
-    };
-
-    return d3.behavior.zoom().on('zoom', zoomHandler.bind(this));    
+    this.attr("transform", "translate(" 
+        + d3.event.translate 
+        + ")scale(" + d3.event.scale + ")");
   }
   // zoom: function(){
   //   // var svg = this.svg,

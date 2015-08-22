@@ -4,6 +4,8 @@ var d3 = require('d3');
 var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.View.extend({
+  tagName: 'div',
+
   id: 'graph',
 
   initialize: function(){
@@ -13,12 +15,18 @@ var GraphView = Backbone.View.extend({
     this.d3el = d3.select(this.el);
 
     this.svg = this.d3el
-      .append("svg")
+      .append('svg')
       .style({
-        height: '100%',
-        width: '100%'
-      })
-      .call(d3Util.zoom.bind(this).call());
+        height: height,
+        width: width
+      });
+    
+    this.svg.append("g");
+
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([0.1, 6])
+        .on("zoom", d3Util.zoom.bind(this.svg.select('g')) );
+    this.svg.call(zoom);
 
     this.force = d3.layout.force()
       .size([parseInt(width), parseInt(height)])
@@ -28,10 +36,9 @@ var GraphView = Backbone.View.extend({
       .charge(-100)
       .gravity(0.1)
       .theta(0.8)
-      .alpha(0.1)
+      .alpha(0.1);
 
     // whenever loading new data (or data for the first time), clear graph and render
-    this.listenTo(this.model, 'load', this.reRender );
     this.listenTo(this.model, 'load', this.reRender );
 
     // NOTE: this doesn't work, b/c the graph model doesn't register changes to it's nodes/edges collections
@@ -42,7 +49,7 @@ var GraphView = Backbone.View.extend({
   },
 
   reRender: function(){
-    this.svg.selectAll('*').remove();
+    this.d3el.select('g').selectAll('*').remove();
     this.render();
   },
 
@@ -61,14 +68,14 @@ var GraphView = Backbone.View.extend({
     this.force.nodes(nodes).links(links);
 
 
-    var link = this.svg.selectAll(".link")
+    var link = this.d3el.select('g').selectAll(".link")
         .data(links)
       .enter().append("line")
         .attr("class", "link")
         .style("stroke", '#666')
         .style("stroke-width", 1);
 
-    var node = this.svg.selectAll(".node")
+    var node = this.d3el.select('g').selectAll(".node")
         .data(nodes)
       .enter().append("circle")
         .attr("class", "node")
@@ -78,21 +85,25 @@ var GraphView = Backbone.View.extend({
 
 
     this.force.start();
-        nodes.forEach(function(d, i){
-          d.x = svgCenterX;
-          d.y = svgCenterY;
-        }.bind(this));
+        // nodes.forEach(function(d, i){
+        //   d.x = svgCenterX;
+        //   d.y = svgCenterY;
+        // }.bind(this));
 
     this.force.on("tick", function() {
       // if(n === 0){ 
       // }else if(n === 1){
       // }else{
-        link.attr("x1", function(d) { return d.source.x; })
+        link.attr("x1", function(d) { 
+          return d.source.x; 
+        })
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
             .attr("y2", function(d) { return d.target.y; });
 
-        node.attr("cx", function(d) { return d.x; })
+        node.attr("cx", function(d) { 
+          return d.x; 
+        })
             .attr("cy", function(d) { return d.y; });
       // }
 
