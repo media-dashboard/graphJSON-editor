@@ -2,6 +2,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var GraphView = require('../views/graphView');
+var SideView = require('../views/sideView');
 
 var AppView = Backbone.View.extend({
   el: '#app',
@@ -12,7 +13,7 @@ var AppView = Backbone.View.extend({
 
   render: function(){
     this.graphView = new GraphView({ model: this.model.graph });
-    this.$el.append(this.graphView.el);
+    this.sideView = new SideView({ model: this.model.graph });
   }
 });
 

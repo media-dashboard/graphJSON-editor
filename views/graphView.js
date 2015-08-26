@@ -4,9 +4,10 @@ var d3 = require('d3');
 var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.View.extend({
-  tagName: 'div',
+  el: '#graph',
+  // tagName: 'div',
 
-  id: 'graph',
+  // id: 'graph',
 
   initialize: function(){
     var height = d3.select('#app').style('height'),
@@ -109,6 +110,8 @@ var GraphView = Backbone.View.extend({
 
       n++;
     }.bind(this));
+
+    return this.el;
   }
 });
 
