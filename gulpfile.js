@@ -1,4 +1,3 @@
-// Gulp Recipe: Fast Browserify Builds - https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
 'use strict';
 
 var watchify = require('watchify');
@@ -21,7 +20,7 @@ var b = watchify(browserify(opts));
 // add transformations here
 // i.e. b.transform(coffeeify);
 
-gulp.task('default', bundle); // so you can run `gulp js` to build the file
+gulp.task('js', bundle); 
 b.on('update', bundle); // on any dep update, runs the bundler
 b.on('log', gutil.log); // output build logs to terminal
 
@@ -37,6 +36,4 @@ function bundle() {
        // Add transformation tasks to the pipeline here.
     .pipe(sourcemaps.write('./')) // writes .map file
     .pipe(gulp.dest('./'));
-}
-
-
+};

@@ -11,6 +11,10 @@ var Node = Backbone.Model.extend({
     this.set('inEdges', new Edges());
   },
 
+  defaults: function(){
+    id: 'asdf'
+  }, 
+
   validate: function(attrs, options){
     if(!attrs.id){ 
       // TODO: serialize and incirement id?
