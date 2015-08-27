@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,300italic);
+
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -51,11 +53,17 @@ table {
 /***************************************************/
 /***************************************************/
 /***************************************************/
+html {
+  font-size: 14px;
+}
+
 body {
   position: absolute;
   top:0;
   bottom:0;
   width:100%;
+  font-family: 'Lato', sans-serif;
+  font-weight: 200;
 }
 
 #app, #graph, #sidebar {
@@ -84,4 +92,13 @@ body {
     right: 0;
     width: 30%;
     overflow: scroll;
+  }
+
+#sidebar {
+  }
+  .nodeItem {
+    margin-right: 38px;
+    margin-left: 8px;
+    padding: 6px;
+    border-bottom: 1px solid #DDD;
   }

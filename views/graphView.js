@@ -59,8 +59,8 @@ var GraphView = Backbone.View.extend({
 
   render: function(){
     var n = 0,
-        svgCenterX = parseInt(this.d3el.style('width')) / 2,
-        svgCenterY = parseInt(this.d3el.style('height')) / 2,
+        svgCenterX = parseInt(this.DIMENSIONS.width) / 2,
+        svgCenterY = parseInt(this.DIMENSIONS.height) / 2,
         nodes = this.model.get('nodes').asNodes(),
         links = this.model.get('edges').asLinks();
 
@@ -73,45 +73,36 @@ var GraphView = Backbone.View.extend({
 
 
     var link = this.d3el.select('g').selectAll(".link")
-        .data(links)
+        .data(links, function(d,i){ return i; })
       .enter().append("line")
         .attr("class", "link")
         .style("stroke", '#666')
         .style("stroke-width", 1);
 
     var node = this.d3el.select('g').selectAll(".node")
-        .data(nodes)
+        .data(nodes, function(d,i){ return i; })
       .enter().append("circle")
         .attr("class", "node")
         .attr("r", 5)
         .style("fill", '#444')
         .call(this.force.drag);
 
+    // Why in the fuck doesn't this work?
+    // nodes.forEach(function(d, i){
+    //   d.x = 0; //svgCenterX;
+    //   d.y = 0; //svgCenterY;
+    // }.bind(this));
 
     this.force.start();
-        // nodes.forEach(function(d, i){
-        //   d.x = svgCenterX;
-        //   d.y = svgCenterY;
-        // }.bind(this));
 
     this.force.on("tick", function() {
-      // if(n === 0){ 
-      // }else if(n === 1){
-      // }else{
-        link.attr("x1", function(d) { 
-          return d.source.x; 
-        })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
 
-        node.attr("cx", function(d) { 
-          return d.x; 
-        })
-            .attr("cy", function(d) { return d.y; });
-      // }
-
-      n++;
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
     }.bind(this));
 
     return this.el;

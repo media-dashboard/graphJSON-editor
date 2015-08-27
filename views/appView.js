@@ -10,10 +10,6 @@ var AppView = Backbone.View.extend({
   el: '#app',
 
   initialize: function(){
-    // d3.select(window).on('resize', _.throttle(function(){
-    //   this.model.graph.trigger('windowResize');
-    // }.bind(this), 1000));
-
     this.render();
   },
 
