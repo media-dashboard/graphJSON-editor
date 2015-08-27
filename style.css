@@ -70,6 +70,15 @@ body {
   #graph {
     left: 0;
     width: 70%;
+    /*padding-bottom: 100%;*/
+    vertical-align: middle; 
+    overflow: hidden; 
+  }
+  svg.svgraph {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   #sidebar {
     right: 0;

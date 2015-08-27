@@ -5,23 +5,32 @@ var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.View.extend({
   el: '#graph',
-  // tagName: 'div',
-
-  // id: 'graph',
 
   initialize: function(){
-    var height = d3.select('#app').style('height'),
-        width = d3.select('#app').style('width');
-
     this.d3el = d3.select(this.el);
+    this.DIMENSIONS = {
+      height: d3.select('#app').style('height'),
+      width: d3.select('#app').style('width')
+    };
 
     this.svg = this.d3el
       .append('svg')
-      .style({
-        height: height,
-        width: width
+      .attr({
+        'class': 'svgraph',
+        'viewBox': "0 0 1000 1000", 
+        'preserveAspectRatio': "xMinYMin meet"
       });
-    
+      // .style({
+      //   height: this.DIMENSIONS.height,
+      //   width: this.DIMENSIONS.width
+      // });
+
+    this.buildGraph();
+
+    this.listenTo(this.model, 'load', this.reRender );
+  },
+
+  buildGraph: function(){
     this.svg.append("g");
 
     var zoom = d3.behavior.zoom()
@@ -30,7 +39,10 @@ var GraphView = Backbone.View.extend({
     this.svg.call(zoom);
 
     this.force = d3.layout.force()
-      .size([parseInt(width), parseInt(height)])
+      .size([
+        parseInt(this.DIMENSIONS.width), 
+        parseInt(this.DIMENSIONS.height)
+      ])
       .linkStrength(0.1)
       .friction(0.9)
       .linkDistance(80)
@@ -38,15 +50,6 @@ var GraphView = Backbone.View.extend({
       .gravity(0.1)
       .theta(0.8)
       .alpha(0.1);
-
-    // whenever loading new data (or data for the first time), clear graph and render
-    this.listenTo(this.model, 'load', this.reRender );
-
-    // NOTE: this doesn't work, b/c the graph model doesn't register changes to it's nodes/edges collections
-      // how to have these events propagate?
-    // this.listenTo(this.model, 'update', function(graph){
-    // this.listenTo(this.model.get('nodes'), 'update', _.throttle(this.render, 500, { leading: false }) );
-    // this.listenTo(this.model.get('edges'), 'update', _.throttle(this.render, 500, { leading: false }) );
   },
 
   reRender: function(){
