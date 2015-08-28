@@ -3,17 +3,16 @@ var Edges = require('../collections/edges');
 
 var Node = Backbone.Model.extend({
   initialize: function(){
-    // outEdges originate from this node and lead to another node
-      // to allow for forward tracking
-    this.set('outEdges', new Edges());
-    // inEdges originate from other nodes and lead to this one
-      // to allow for back tracking
-    this.set('inEdges', new Edges());
+    if(! this.get('id') ){
+      this.set('id', this.constructor.generateId());
+    }
+    this.on('remove', this.remove);
   },
 
-  defaults: function(){
-    id: 'asdf'
-  }, 
+  parse: function(json, xhr){
+    json.id = this.generateId(); // doesn't work
+    return json;
+  },
 
   validate: function(attrs, options){
     if(!attrs.id){ 
@@ -21,6 +20,20 @@ var Node = Backbone.Model.extend({
       return Error('Node must have an id'); 
     }
   },
+
+  remove: function(model){
+    // removing a node removes the associated views from the DOM, 
+    // but does not delete (so it can be undone)
+      // don't know why this needs to be specified, as it should be automatic
+    this.collection.trigger('remove', this);
+  }
+
+}, {
+  // Class Properties
+  generateId: function(){
+    var id = 0;
+    return function(){ return id++; };
+  }.call(this)
 });
 
 module.exports = Node;

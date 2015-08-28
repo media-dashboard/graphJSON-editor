@@ -8,48 +8,65 @@ var Edges = require('../collections/edges');
 
 var Graph = Backbone.Model.extend({
   initialize: function(){
-    this.set('nodes', new Nodes());
-    this.set('edges', new Edges());
-    this.load('../data/miserables.json');
+    this.loading = false;
+
+    this.nodes = new Nodes();
+    this.edges = new Edges();
+
+    this.on('request', function(graph, xhr, options){
+      if(options.loading){
+        console.log('started loading graph data');
+        this.loading = true;
+      }
+    });
+    this.on('sync', function(graph, json, options){
+      if(options.loading){
+        console.log('finished loading graph data'); // TODO: make sure this doesn't run on save
+        json.nodes.forEach(this.addNode.bind(this));
+        json.links.forEach(this.addEdge.bind(this));
+        this.loading = false;
+      }
+    });
+
+    this.listenTo(this.nodes, 'remove', function(model){
+      // remove all edges associated with node
+      this.edges.filter(function(edge){
+        return edge.source === model.id || edge.target === model.id;
+      }).trigger('remove');
+      // trigger re-render on graph
+      this.trigger('remove')
+    });
   },
 
   addNode: function(nodeJSON){
     var newNode = new Node(nodeJSON);
-    this.get('nodes').add(newNode);
+    this.nodes.add(newNode);
     return newNode;
   },
 
   addEdge: function(edgeJSON){
     // will try to match edgeJSON.source to node.id, then to node index
     var newEdge = new Edge(edgeJSON),
-        nodes = this.get('nodes'),
+        nodes = this.nodes,
         sourceNode = nodes.findWhere({ id: edgeJSON.source }) || nodes.at(edgeJSON.source),
-        targetNode = nodes.findWhere({ id: edgeJSON.target }) || nodes.at(edgeJSON.source);
+        targetNode = nodes.findWhere({ id: edgeJSON.target }) || nodes.at(edgeJSON.target);
         
-    newEdge.set('sourceNode', sourceNode);
-    newEdge.set('targetNode', targetNode);
+    // newEdge.set('sourceNode', sourceNode);
+    // newEdge.set('targetNode', targetNode);
     
-    // adding newEdge to sourceNode allows for 'forward tracking':
+    // DISCUSSION ON ADDING A MODEL TO MULTIPLE COLLECTIONS https://github.com/jashkenas/backbone/issues/604
+    // TODO: test whether the duplication of 'outEdges' and 'inEdges' arrays simply to append a newEdge is inefficient
+      // and whether it's inefficient for each node to be associated with two collection objects
       // track a node to any node it connects to
-    sourceNode.get('outEdges').add(newEdge);
-    // NOTE: adding newEdge to targetNode would allow for 'backtracking' (currently disabled): 
+    // sourceNode.outEdges = sourceNode.outEdges.concat(newEdge);
       // track a node to any node that connects to it
-    targetNode.get('inEdges').add(newEdge);
-    this.get('edges').add(newEdge);
+    // targetNode.inEdges = targetNode.inEdges.concat(newEdge);
+    this.edges.add(newEdge);
     return newEdge;
   },
 
-  load: function(file){
-    d3.json(file, function(err, json){
-
-      json.nodes.forEach(this.addNode.bind(this));
-      json.links.forEach(this.addEdge.bind(this));
-      this.trigger('load');
-    }.bind(this));
-  },
-
   summarize: function(){
-    this.get('nodes').each(function(node){
+    this.nodes.each(function(node){
       var lovers = getAttractions(node, 1),
           haters = getAttractions(node, -1);
 

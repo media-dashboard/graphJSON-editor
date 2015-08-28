@@ -7,12 +7,34 @@ var GraphView = Backbone.View.extend({
   el: '#graph',
 
   initialize: function(){
+    this.listenTo(this.model, 'loading', function(){
+      this.loading = true;
+    });
+    this.listenTo(this.model, 'loaded', function(){
+      this.loading = false;
+      this.render();
+    });
+    this.listenTo(this.model, 'sync', function(graph, json, options){
+      if( options.loading ){ 
+        this.clearGraph(); 
+        this.render(); 
+      }
+    });
+    this.listenTo(this.model.nodes, 'add remove', function(){
+      if(! this.model.loading ){ this.render(); } // don't render when loading data
+    });
+    this.listenTo(this.model.edges, 'add remove', function(){
+      if(! this.model.loading ){ this.render(); } // don't render when loading data
+    });
+
     this.d3el = d3.select(this.el);
+
     this.DIMENSIONS = {
       height: d3.select('#app').style('height'),
       width: d3.select('#app').style('width')
     };
 
+    
     this.svg = this.d3el
       .append('svg')
       .attr({
@@ -20,14 +42,8 @@ var GraphView = Backbone.View.extend({
         'viewBox': "0 0 1000 1000", 
         'preserveAspectRatio': "xMinYMin meet"
       });
-      // .style({
-      //   height: this.DIMENSIONS.height,
-      //   width: this.DIMENSIONS.width
-      // });
 
     this.buildGraph();
-
-    this.listenTo(this.model, 'load', this.reRender );
   },
 
   buildGraph: function(){
@@ -52,41 +68,38 @@ var GraphView = Backbone.View.extend({
       .alpha(0.1);
   },
 
-  reRender: function(){
+  clearGraph: function(){
     this.d3el.select('g').selectAll('*').remove();
-    this.render();
   },
 
   render: function(){
-    var n = 0,
-        svgCenterX = parseInt(this.DIMENSIONS.width) / 2,
+    var svgCenterX = parseInt(this.DIMENSIONS.width) / 2,
         svgCenterY = parseInt(this.DIMENSIONS.height) / 2,
-        nodes = this.model.get('nodes').asNodes(),
-        links = this.model.get('edges').asLinks();
+        nodes = this.model.nodes.toJSON(),
+        links = this.model.edges.toJSON();
 
-    
-
-    // this.force.start();
-    // for (var i = 0; i < 100; ++i){ this.force.tick(); }
-    // this.force.stop();
+    // update d3.force object
     this.force.nodes(nodes).links(links);
 
-
-    var link = this.d3el.select('g').selectAll(".link")
-        .data(links, function(d,i){ return i; })
-      .enter().append("line")
+    // update node and link SVGs
+    this.linkSVGs = this.d3el.select('g').selectAll(".link")
+        .data(links, function(d,i){ return i; });
+    this.linkSVGs.enter().append("line")
         .attr("class", "link")
         .style("stroke", '#666')
         .style("stroke-width", 1);
+    this.linkSVGs.exit().remove();
 
-    var node = this.d3el.select('g').selectAll(".node")
-        .data(nodes, function(d,i){ return i; })
-      .enter().append("circle")
+    this.nodeSVGs = this.d3el.select('g').selectAll(".node")
+        .data(nodes, function(d,i){ return i; });
+    this.nodeSVGs.enter().append("circle")
         .attr("class", "node")
         .attr("r", 5)
         .style("fill", '#444')
         .call(this.force.drag);
+    this.nodeSVGs.exit().remove();
 
+    // Initialize all nodes' location to the center of the graph window
     // Why in the fuck doesn't this work?
     // nodes.forEach(function(d, i){
     //   d.x = 0; //svgCenterX;
@@ -95,17 +108,21 @@ var GraphView = Backbone.View.extend({
 
     this.force.start();
 
-    this.force.on("tick", function() {
-      link.attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
-
-      node.attr("cx", function(d) { return d.x; })
-          .attr("cy", function(d) { return d.y; });
-    }.bind(this));
+    this.force.on("tick", this.forceTick.bind(this));
 
     return this.el;
+  },
+
+  forceTick: function(){
+    this.linkSVGs
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+    this.nodeSVGs
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; });
   }
 });
 

@@ -10,7 +10,9 @@ var SideView = Backbone.View.extend({
   initialize: function(){
     // for debugging
     this.NodeListItem = NodeListItem;
-    this.listenTo(this.model, 'load', this.render );
+    this.listenTo(this.model, 'sync', function(graph, json, options){
+      if( options.loading ){ this.render(); }
+    });
   },
 
   template: function(){
@@ -18,7 +20,7 @@ var SideView = Backbone.View.extend({
   },
 
   render: function(){
-    this.model.get('nodes').forEach(function(node){
+    this.model.nodes.forEach(function(node){
       this.$el.append( new NodeListItem({ model: node }).render() );
     }, this);
 

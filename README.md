@@ -11,6 +11,11 @@
 * templates:
   * handlebars w/ hbsfy
 
+* API: modification (local) vs. save (server)
+  * model.save() // save to server (possibly only saving a diff of the data?)
+    * delete all models/views that have been removed
+  * model.remove() // temporarily remove model's view DOM element, but don't delete the model
+
 * order of instantiating app:
   * should a model instantiate a view, or vice versa
   * AppView -> App -> GraphView -> Graph
@@ -22,8 +27,14 @@ script.js
   |
   |----App
   |     |----Graph
-  |           |----Nodes
-  |           |----Edges
+  |           |----Nodes----Node
+  |           |----Edges----Edge
+  |
   |----AppView
         |----GraphView
 ```
+
+## principles
+
+* Non-destructive data editing: 
+> apply diffs to the data, but don't permanently alter the dataset, unless that modification can be applied to the upstream source

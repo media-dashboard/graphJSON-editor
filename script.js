@@ -21,6 +21,8 @@ _.extend(window, {
 });
 
 window.app = window.appView.model;
+// app.graph.load('../data/miserables.json');
+app.graph.fetch({ url: '../data/miserables.json', loading: true });
 
 // PRODUCTION
 // window.appView = new AppView({ model: new App(); });
