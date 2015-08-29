@@ -8,7 +8,7 @@ var GraphView = Backbone.View.extend({
 
   initialize: function(){
     this.d3el = d3.select(this.el);
-    
+
     this.listenTo(this.model, 'sync', function(graph, json, options){
       if( options.loading ){ 
         this.clearGraph(); 
@@ -23,6 +23,12 @@ var GraphView = Backbone.View.extend({
     });
     this.listenTo(this.model, 'alter', function(){
       this.render();
+    });
+    this.listenTo(this.model.nodes, 'lihoverenter', function(node){
+      this.highlightNode(node);
+    });
+    this.listenTo(this.model.nodes, 'lihoverleave', function(node){
+      this.removeHighlightNode(node);
     });
 
 
@@ -41,6 +47,51 @@ var GraphView = Backbone.View.extend({
       });
 
     this.buildGraph();
+  },
+
+  highlightNode: function(node){
+    var nodeEl = this.d3el.select('g')
+      .selectAll('.node')
+      .filter(function(d, i){
+        return d.id === this.id;
+      }.bind(node))
+
+    this.setStyle(nodeEl, 'highlight');
+  },
+
+  removeHighlightNode: function(node){
+    var nodeEl = this.d3el.select('g')
+      .selectAll('.node')
+      .filter(function(d, i){
+        return d.id === this.id;
+      }.bind(node))
+
+    this.setStyle(nodeEl, 'dark');
+  },
+
+  setStyle: function(elements, style){
+    if(style === 'highlight'){
+      elements.transition().duration(200)
+        .style({
+          "stroke": "#7D122D",
+          "stroke-width": 1,
+          "fill": "#FF3B4B"
+        })
+        .attr({
+          "r": 6
+        });
+    }else if(style === 'dark'){
+      elements.transition().duration(200)
+        .style({
+          "stroke": "#CCC",
+          "stroke-width": 1,
+          "fill": "#444"
+        })
+        .attr({
+          "r": 5
+        });
+    }
+    return elements;
   },
 
   buildGraph: function(){
@@ -91,9 +142,10 @@ var GraphView = Backbone.View.extend({
         .data(nodes, function(d,i){ return i; });
     this.nodeSVGs.enter().append("circle")
         .attr("class", "node")
-        .attr("r", 5)
-        .style("fill", '#444')
         .call(this.force.drag);
+
+    this.setStyle(this.nodeSVGs, 'dark');
+
     this.nodeSVGs.exit().remove();
 
     // Initialize all nodes' location to the center of the graph window

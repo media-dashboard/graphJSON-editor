@@ -102,3 +102,6 @@ body {
     padding: 6px;
     border-bottom: 1px solid #DDD;
   }
+  .nodeItem:hover {
+    background-color: #FFF0F1;
+  }

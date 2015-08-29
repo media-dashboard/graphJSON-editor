@@ -17,6 +17,14 @@ var NodeListItem = Backbone.View.extend({
       this.model.trigger('destroy', this.model);
     }.bind(this));
 
+    this.d3el.on('mouseenter', function(){
+      this.model.trigger('lihoverenter', this.model);
+    }.bind(this));
+
+    this.d3el.on('mouseleave', function(){
+      this.model.trigger('lihoverleave', this.model);
+    }.bind(this));
+
     this.listenTo(this.model, 'destroy', this.remove);
   },
 
