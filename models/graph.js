@@ -31,10 +31,16 @@ var Graph = Backbone.Model.extend({
     this.listenTo(this.nodes, 'remove', function(model){
       // remove all edges associated with node
       this.edges.filter(function(edge){
-        return edge.source === model.id || edge.target === model.id;
-      }).trigger('remove');
+        return edge.get('source') === model.id || edge.get('target') === model.id;
+      }).forEach(function(edge){
+        // TODO: onclick event triggers destroy event on node and all connected edges
+          // does not sync w/ server
+          // but does update the history to reflect the changes
+        edge.trigger('destroy', edge);
+      });
       // trigger re-render on graph
-      this.trigger('remove')
+      // TODO: what's the best event to trigger here?
+      this.trigger('alter');
     });
   },
 
@@ -50,17 +56,7 @@ var Graph = Backbone.Model.extend({
         nodes = this.nodes,
         sourceNode = nodes.findWhere({ id: edgeJSON.source }) || nodes.at(edgeJSON.source),
         targetNode = nodes.findWhere({ id: edgeJSON.target }) || nodes.at(edgeJSON.target);
-        
-    // newEdge.set('sourceNode', sourceNode);
-    // newEdge.set('targetNode', targetNode);
-    
-    // DISCUSSION ON ADDING A MODEL TO MULTIPLE COLLECTIONS https://github.com/jashkenas/backbone/issues/604
-    // TODO: test whether the duplication of 'outEdges' and 'inEdges' arrays simply to append a newEdge is inefficient
-      // and whether it's inefficient for each node to be associated with two collection objects
-      // track a node to any node it connects to
-    // sourceNode.outEdges = sourceNode.outEdges.concat(newEdge);
-      // track a node to any node that connects to it
-    // targetNode.inEdges = targetNode.inEdges.concat(newEdge);
+
     this.edges.add(newEdge);
     return newEdge;
   },

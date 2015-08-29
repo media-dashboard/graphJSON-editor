@@ -38,3 +38,8 @@ script.js
 
 * Non-destructive data editing: 
 > apply diffs to the data, but don't permanently alter the dataset, unless that modification can be applied to the upstream source
+  * create an immutable graph history object that records changes
+  * creating/destroying nodes/edges modifies the collections/models, and writes changes to history, but does not sync w/ server
+  * commit event writes all changes as a changeset to server
+  * fetch:data fetches raw data
+  * fetch:changeset fetches and applies changeset

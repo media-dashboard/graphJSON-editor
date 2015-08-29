@@ -7,27 +7,24 @@ var GraphView = Backbone.View.extend({
   el: '#graph',
 
   initialize: function(){
-    this.listenTo(this.model, 'loading', function(){
-      this.loading = true;
-    });
-    this.listenTo(this.model, 'loaded', function(){
-      this.loading = false;
-      this.render();
-    });
+    this.d3el = d3.select(this.el);
+    
     this.listenTo(this.model, 'sync', function(graph, json, options){
       if( options.loading ){ 
         this.clearGraph(); 
         this.render(); 
       }
     });
-    this.listenTo(this.model.nodes, 'add remove', function(){
+    this.listenTo(this.model.nodes, 'add', function(){
       if(! this.model.loading ){ this.render(); } // don't render when loading data
     });
-    this.listenTo(this.model.edges, 'add remove', function(){
+    this.listenTo(this.model.edges, 'add', function(){
       if(! this.model.loading ){ this.render(); } // don't render when loading data
+    });
+    this.listenTo(this.model, 'alter', function(){
+      this.render();
     });
 
-    this.d3el = d3.select(this.el);
 
     this.DIMENSIONS = {
       height: d3.select('#app').style('height'),

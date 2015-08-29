@@ -13,10 +13,11 @@ var NodeListItem = Backbone.View.extend({
       // remove node
       // TODO: hijack BB destroy to destroy model w/o actually syncing w/ server
         // possibly by setting model.isNew = true
-      this.model.trigger('remove', this.model);
+      // this.model.trigger('remove', this.model);
+      this.model.trigger('destroy', this.model);
     }.bind(this));
 
-    this.listenTo(this.model, 'remove', this.remove);
+    this.listenTo(this.model, 'destroy', this.remove);
   },
 
   template: _.template('<span><%= id %></span> : <em><%= attr %></em>'),
