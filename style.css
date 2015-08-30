@@ -82,12 +82,6 @@ body {
     vertical-align: middle; 
     overflow: hidden; 
   }
-  svg.svgraph {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
   #sidebar {
     right: 0;
     width: 30%;
@@ -105,4 +99,17 @@ body {
   .nodeItem:hover,
   .nodeItem.hover {
     background-color: #FFF0F1;
+  }
+
+svg {
+
+  }
+  svg.svgraph {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  circle.node:hover {
+    cursor: pointer;
   }
