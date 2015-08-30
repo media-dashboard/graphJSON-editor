@@ -9,20 +9,6 @@ var GraphView = Backbone.View.extend({
 
   initialize: function(){
     this.d3el = d3.select(this.el);
-    this.DIMENSIONS = {
-      height: d3.select('#app').style('height'),
-      width: d3.select('#app').style('width')
-    };
-
-    this.svg = this.d3el
-      .append('svg')
-      .attr({
-        'class': 'svgraph',
-        'viewBox': "0 0 1000 1000", 
-        'preserveAspectRatio': "xMinYMin meet"
-      });
-
-    this.svg.append("g");
     this.buildGraph();
 
     this.listenTo(this.model, 'sync', function(graph, json, options){
@@ -44,17 +30,18 @@ var GraphView = Backbone.View.extend({
     this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
 
 
-
     // Events
 
     // TODO, rewrite this in D3 (accessing the node's data would be cleaner in D3)
     this.$el.on('mouseenter', '.node', function(e){
       var node = this.model.nodes.get(e.target.__data__.id);
       node.trigger('nodehoverenter', node);
+      this.highlightNode(node);
     }.bind(this));
     this.$el.on('mouseleave', '.node', function(e){
       var node = this.model.nodes.get(e.target.__data__.id);
       node.trigger('nodehoverleave', node);
+      this.removeHighlightNode(node);
     }.bind(this));
 
     //////////////////////////////
@@ -122,51 +109,57 @@ var GraphView = Backbone.View.extend({
   },
 
   highlightNode: function(node){
-    var nodeEl = this.d3el.select('g')
+    var nodeEl = this.d3el
       .selectAll('.node')
       .filter(function(d, i){
         return d.id === this.id;
-      }.bind(node))
+      }.bind(node));
 
-    this.setStyle(nodeEl, 'highlight');
+    d3Util.setStyle(nodeEl, 'highlight');
+
+    var edgeEls = this.d3el
+      .selectAll('.link')
+      .filter(function(d, i){
+        return d.source.id === this.id || d.target.id === this.id;
+      }.bind(node));
+
+    d3Util.setStyle(edgeEls, 'highlight');
   },
 
   removeHighlightNode: function(node){
-    var nodeEl = this.d3el.select('g')
+    var nodeEl = this.d3el
       .selectAll('.node')
       .filter(function(d, i){
         return d.id === this.id;
       }.bind(node))
 
-    this.setStyle(nodeEl, 'dark');
-  },
+    d3Util.setStyle(nodeEl, 'dark');
 
-  setStyle: function(elements, style){
-    if(style === 'highlight'){
-      elements.transition().duration(200)
-        .style({
-          "stroke": "#7D122D",
-          "stroke-width": 1,
-          "fill": "#FF3B4B"
-        })
-        .attr({
-          "r": 6
-        });
-    }else if(style === 'dark'){
-      elements.transition().duration(200)
-        .style({
-          "stroke": "#CCC",
-          "stroke-width": 1,
-          "fill": "#444"
-        })
-        .attr({
-          "r": 5
-        });
-    }
-    return elements;
+    var edgeEls = this.d3el
+      .selectAll('.link')
+      .filter(function(d, i){
+        return d.source.id === this.id || d.target.id === this.id;
+      }.bind(node));
+
+    d3Util.setStyle(edgeEls, 'dark');
   },
 
   buildGraph: function(){
+    this.DIMENSIONS = {
+      height: d3.select('#app').style('height'),
+      width: d3.select('#app').style('width')
+    };
+
+    this.svg = this.d3el
+      .append('svg')
+      .attr({
+        'class': 'svgraph',
+        'viewBox': "0 0 1000 1000", 
+        'preserveAspectRatio': "xMinYMin meet"
+      });
+
+    this.svg.append("g");
+
     var zoom = d3.behavior.zoom()
         .scaleExtent([0.1, 6])
         .on("zoom", d3Util.zoom.bind(this.svg.select('g')) );
@@ -203,9 +196,10 @@ var GraphView = Backbone.View.extend({
     this.linkSVGs = this.d3el.select('g').selectAll(".link")
         .data(links, function(d,i){ return i; });
     this.linkSVGs.enter().append("line")
-        .attr("class", "link")
-        .style("stroke", '#666')
-        .style("stroke-width", 1);
+        .attr("class", "link");
+
+    d3Util.setStyle(this.linkSVGs, 'dark');
+
     this.linkSVGs.exit().remove();
 
     this.nodeSVGs = this.d3el.select('g').selectAll(".node")
@@ -214,7 +208,7 @@ var GraphView = Backbone.View.extend({
         .attr("class", "node")
         .call(this.force.drag);
 
-    this.setStyle(this.nodeSVGs, 'dark');
+    d3Util.setStyle(this.nodeSVGs, 'dark');
 
     this.nodeSVGs.exit().remove();
 
