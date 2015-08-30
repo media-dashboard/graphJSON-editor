@@ -1,6 +1,7 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
+var $ = require('jquery');
 var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.View.extend({
@@ -8,6 +9,21 @@ var GraphView = Backbone.View.extend({
 
   initialize: function(){
     this.d3el = d3.select(this.el);
+    this.DIMENSIONS = {
+      height: d3.select('#app').style('height'),
+      width: d3.select('#app').style('width')
+    };
+
+    this.svg = this.d3el
+      .append('svg')
+      .attr({
+        'class': 'svgraph',
+        'viewBox': "0 0 1000 1000", 
+        'preserveAspectRatio': "xMinYMin meet"
+      });
+
+    this.svg.append("g");
+    this.buildGraph();
 
     this.listenTo(this.model, 'sync', function(graph, json, options){
       if( options.loading ){ 
@@ -24,29 +40,85 @@ var GraphView = Backbone.View.extend({
     this.listenTo(this.model, 'alter', function(){
       this.render();
     });
-    this.listenTo(this.model.nodes, 'lihoverenter', function(node){
-      this.highlightNode(node);
-    });
-    this.listenTo(this.model.nodes, 'lihoverleave', function(node){
-      this.removeHighlightNode(node);
-    });
+    this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
+    this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
 
 
-    this.DIMENSIONS = {
-      height: d3.select('#app').style('height'),
-      width: d3.select('#app').style('width')
-    };
 
-    
-    this.svg = this.d3el
-      .append('svg')
-      .attr({
-        'class': 'svgraph',
-        'viewBox': "0 0 1000 1000", 
-        'preserveAspectRatio': "xMinYMin meet"
-      });
+    // Events
 
-    this.buildGraph();
+    // TODO, rewrite this in D3 (accessing the node's data would be cleaner in D3)
+    this.$el.on('mouseenter', '.node', function(e){
+      var node = this.model.nodes.get(e.target.__data__.id);
+      node.trigger('nodehoverenter', node);
+    }.bind(this));
+    this.$el.on('mouseleave', '.node', function(e){
+      var node = this.model.nodes.get(e.target.__data__.id);
+      node.trigger('nodehoverleave', node);
+    }.bind(this));
+
+    //////////////////////////////
+    // this works
+    // setTimeout(function(){
+    //   this.d3el.selectAll('.node')
+    //     .on('mouseenter', function(){
+    //       console.log('mouseenter')
+    //     })
+    // }.bind(this), 2000)
+
+    //////////////////////////////
+    // this doesn't
+    // this.d3el.on('mouseenter', function(){
+    //   // delegate mouseenter event to all nodes
+    //   console.log(d3.event.target.classList);
+    //   var target = d3.event.target;
+    //   d3.select(target).selectAll('.node')
+    //   // if(d3.event.target.tagName === 'circle'){
+    //   //   console.log(this);
+    //   // }
+    // });
+
+    //////////////////////////////
+    // NOR DOES THIS
+    // var delegate = function(el, type, selector, callback){
+    //   el = typeof el === 'string' ? document.querySelector(el) : el;
+    //   if(!el){ return; }
+    //   el.addEventListener(type, function(e){
+    //     var node = e.target;
+    //     while(node && node !== el){
+    //       if(node.matches(selector)){
+    //         callback.call(node, event);
+    //       }
+    //       node = node.parentNode;
+    //     }
+    //   })
+    // };
+    //
+    // delegate(this.el, 'mouseenter', '.node', function(e){
+    //   console.log(e);
+    // });
+
+    //////////////////////////////
+    // NOR DOES THIS
+    // EVENT DELEGATION D3: https://groups.google.com/forum/#!topic/d3-js/lpezER89BOc
+    // delegate an event handler to only fire for specific elements
+    // var delegate = function(target, handler) {
+    //   return function() {
+    //     var evtTarget = d3.event.target;
+    //     if ($(evtTarget).is(target)) {
+    //       handler.call(evtTarget, evtTarget.__data__);
+    //     }
+    //   };
+    // };
+    // // add to selection prototype
+    // d3.selection.prototype.delegate = function(evt, target, handler) {
+    //     return this.on(evt, delegate(handler, target));
+    // };
+  
+    // this.d3el.select('g').on('mouseenter', delegate('.node' , function(){
+    //   console.log('mouseenter')
+    // }));
+
   },
 
   highlightNode: function(node){
@@ -95,8 +167,6 @@ var GraphView = Backbone.View.extend({
   },
 
   buildGraph: function(){
-    this.svg.append("g");
-
     var zoom = d3.behavior.zoom()
         .scaleExtent([0.1, 6])
         .on("zoom", d3Util.zoom.bind(this.svg.select('g')) );

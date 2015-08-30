@@ -26,9 +26,19 @@ var NodeListItem = Backbone.View.extend({
     }.bind(this));
 
     this.listenTo(this.model, 'destroy', this.remove);
+    this.listenTo(this.model, 'nodehoverenter', this.highlightNodeLi)
+    this.listenTo(this.model, 'nodehoverleave', this.removeHighlightNodeLi)
   },
 
   template: _.template('<span><%= id %></span> : <em><%= attr %></em>'),
+
+  highlightNodeLi: function(node){
+    this.d3el.classed('hover', true);
+  },
+
+  removeHighlightNodeLi: function(node){
+    this.d3el.classed('hover', false);
+  },
 
   render: function(){ 
     var listItem = this.template({ id: this.model.cid, attr: this.model.get('name') });

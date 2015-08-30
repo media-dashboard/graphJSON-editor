@@ -6,9 +6,6 @@ var Node = Backbone.Model.extend({
     if(! this.get('id') ){
       this.set('id', this.constructor.generateId());
     }
-    this.on('lihoverenter', function(){
-      this.collection.trigger('lihoverenter', this);
-    })
   },
 
   parse: function(json, xhr){
