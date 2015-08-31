@@ -8,6 +8,7 @@ var GraphView = Backbone.View.extend({
   el: '#graph',
 
   initialize: function(){
+    this.highlightDiffusion = 2;
     this.d3el = d3.select(this.el);
     this.buildGraph();
 
@@ -28,9 +29,6 @@ var GraphView = Backbone.View.extend({
     });
     this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
     this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
-
-
-    // Events
 
     // TODO, rewrite this in D3 (accessing the node's data would be cleaner in D3)
     this.$el.on('mouseenter', '.node', function(e){

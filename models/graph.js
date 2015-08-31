@@ -10,8 +10,12 @@ var Graph = Backbone.Model.extend({
   initialize: function(){
     this.loading = false;
 
+    // TODO: attaching references between nodes and edges seems like a hack
+    // using backbone relational should get around this
     this.nodes = new Nodes();
     this.edges = new Edges();
+    this.edges.nodes = this.nodes;
+    this.nodes.edges = this.edges;
 
     this.on('request', function(graph, xhr, options){
       if(options.loading){
