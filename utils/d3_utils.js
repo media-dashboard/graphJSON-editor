@@ -40,10 +40,7 @@ module.exports = {
     // check if elements is empty
     var n = 0;
     elements.each(function(){ ++n; });
-    if(n === 0){
-      console.warn('setStyle on empty selection'); 
-      return;
-    }
+    if(n === 0){ return; }
 
     var duration = 200;
     if(elements.attr('class') === 'node' && style === 'highlight'){
@@ -75,8 +72,9 @@ module.exports = {
     }else if(elements.attr('class') === 'link' && style === 'dark'){
       elements.transition().duration(duration)
         .style({
-          "stroke": "#444",
+          "stroke": "#999",
           "stroke-width": 1,
+          "stroke-opacity": 0.6
         });
     }
     return elements;

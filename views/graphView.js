@@ -146,8 +146,8 @@ var GraphView = Backbone.View.extend({
 
   buildGraph: function(){
     this.DIMENSIONS = {
-      height: d3.select('#app').style('height'),
-      width: d3.select('#app').style('width')
+      height: d3.select('#graph').style('height'),
+      width: d3.select('#graph').style('width')
     };
 
     this.svg = this.d3el
@@ -186,31 +186,40 @@ var GraphView = Backbone.View.extend({
   render: function(){
     var svgCenterX = parseInt(this.DIMENSIONS.width) / 2,
         svgCenterY = parseInt(this.DIMENSIONS.height) / 2,
-        nodes = this.model.nodes.toJSON(),
-        links = this.model.edges.toJSON();
+        nodes = this.model.nodes.toJSON();
+
+    // point each link to its source and target nodes
+    var links = this.model.edges.toJSON().map(function(link){
+      link.source = _.find(nodes, function(node){ return node.id === link.source; });
+      link.target = _.find(nodes, function(node){ return node.id === link.target; });
+      return link;
+    }, this);
 
     // update d3.force object
-    this.force.nodes(nodes).links(links);
+    this.force.nodes(nodes).links(links).start();
 
-    // update node and link SVGs
     this.linkSVGs = this.d3el.select('g').selectAll(".link")
-        .data(links, function(d,i){ return i; });
+        // .data(links, function(d,i){ return d.source.id + "-" + d.target.id; });
+        .data(links);
+
     this.linkSVGs.enter().append("line")
         .attr("class", "link");
 
-    d3Util.setStyle(this.linkSVGs, 'dark');
-
-    this.linkSVGs.exit().remove();
-
     this.nodeSVGs = this.d3el.select('g').selectAll(".node")
-        .data(nodes, function(d,i){ return i; });
+        // .data(nodes, function(d,i){ return d.id; });
+        .data(nodes);
+
     this.nodeSVGs.enter().append("circle")
         .attr("class", "node")
         .call(this.force.drag);
 
+    d3Util.setStyle(this.linkSVGs, 'dark');
     d3Util.setStyle(this.nodeSVGs, 'dark');
 
+    this.linkSVGs.exit().remove();
     this.nodeSVGs.exit().remove();
+    
+
 
     // Initialize all nodes' location to the center of the graph window
     // Why in the fuck doesn't this work?
@@ -219,14 +228,26 @@ var GraphView = Backbone.View.extend({
     //   d.y = 0; //svgCenterY;
     // }.bind(this));
 
-    this.force.start();
-
+    // this.force.on("start", function(type, alpha){});
     this.force.on("tick", this.forceTick.bind(this));
+    this.force.on("end", function(type, alpha){
+      // UPDATE graph.nodes collection
+      // d3.force stores calculated node attributes in each node object
+      // in order for subsequent calls to graph.render() to work, the nodes
+      // collection must remember these computed values
+      // see: https://github.com/mbostock/d3/wiki/Force-Layout#nodes
+      this.nodeSVGs.data().forEach(function(node){
+        ['x', 'y', 'px', 'py', 'fixed', 'weight'].forEach(function(attr){
+          var nodeModel = this.model.nodes.findWhere( {id: node.id} ).set(attr, node[attr]);
+        }, this);
+        
+      }, this)
+    }.bind(this));
 
     return this.el;
   },
 
-  forceTick: function(){
+  forceTick: function(type, alpha){
     this.linkSVGs
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
