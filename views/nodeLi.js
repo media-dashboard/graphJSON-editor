@@ -41,7 +41,7 @@ var NodeListItem = Backbone.View.extend({
   },
 
   render: function(){ 
-    var listItem = this.template({ id: this.model.cid, attr: this.model.get('name') });
+    var listItem = this.template({ id: this.model.id, attr: this.model.get('name') });
     // TODO: replace d3el.html(...) w/ d3 templating fn
     this.d3el.html(listItem);
     return this.el;
