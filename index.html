@@ -11,7 +11,11 @@
 <body>
   <div id="app">
     <div id="graph"></div>
-    <div id="sidebar"></div>
+    <div id="sidebar">
+      <script id="nodeLi" type="text/x-handlebars-template">
+      <strong>{{ id }}</strong> : <em>{{ attr }}</em>
+      </script>
+    </div>
   </div>
   <script src="bundle.js"></script>
 </body>
