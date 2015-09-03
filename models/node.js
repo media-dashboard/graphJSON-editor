@@ -243,9 +243,12 @@ var Node = Backbone.Model.extend({
     }
 
     // reset node.walked before exiting
-    function resetWalked(nodeEdge){ nodeEdge.set('walked', false); }
-    app.graph.nodes.each(resetWalked);
-    app.graph.edges.each(resetWalked);
+    function resetWalkedAndDepth(nodeEdge){ 
+      nodeEdge.set('walked', false);
+      nodeEdge.set('depth', null);
+    }
+    results.nodes.forEach(resetWalked);
+    results.edges.forEach(resetWalked);
     return results;
   },
 
