@@ -6,17 +6,37 @@
   <!--         <title></title>
   <meta name="description" content=""> -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="node_modules/zurb-foundation-npm/css/normalize.css">
+  <link rel="stylesheet" href="node_modules/zurb-foundation-npm/css/foundation.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app">
+    <header>
+
+    </header>
+
     <div id="graph"></div>
+
     <div id="sidebar">
-      <script id="nodeLi" type="text/x-handlebars-template">
-      <strong>{{ id }}</strong> : <em>{{ attr }}</em>
-      </script>
+      <div class="row">
+        <ul id="nav" class="small-block-grid-2">
+          <li class="text-center"><a href="#">Nodes</a></li>
+          <li class="text-center"><a href="#">Edges</a></li>
+        </ul>
+
+        <div id="graph-elements">
+
+          <script id="nodeLi" type="text/x-handlebars-template">
+            <strong>{{ id }}</strong> : <em>{{ attr }}</em>
+          </script>
+
+        </div>
+      </div>
     </div>
+
   </div>
+  <!-- <script src="node_modules/zurb-foundation-npm/js/foundation.min.js"></script> -->
   <script src="bundle.js"></script>
 </body>
 </html>

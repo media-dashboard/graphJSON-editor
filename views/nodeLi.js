@@ -5,7 +5,7 @@ var Handlebars = require('handlebars');
 var $ = require('jquery');
 
 var NodeListItem = Backbone.View.extend({
-  
+
   className: 'nodeItem',
 
   initialize: function(){
