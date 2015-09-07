@@ -28,6 +28,7 @@ var GraphView = Backbone.D3View.extend({
     });
     this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
     this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
+    this.listenTo(this.model.nodes, 'clicked', this.clickNode);
   },
 
   graphRenderCallback: function(){
@@ -45,14 +46,11 @@ var GraphView = Backbone.D3View.extend({
 
     this.delegate('mousedown', '.node', function(e,d,i){
       var node = this.model.nodes.findWhere({id: d.id})
-      node.trigger('nodeclicked', node);
-      this.clickNode(node);
+      var node = node.trigger('clicked', node);
     }.bind(this));
   },
 
   clickNode: function(node){
-    node.set('clicked', !node.get('clicked'));
-
     this.d3el.selectAll('.node')
       .filter(function(d, i){
         return d.id === this.id;
@@ -153,11 +151,12 @@ var GraphView = Backbone.D3View.extend({
 
     this.nodeSVGs.enter().append("circle")
         .attr("class", "node")
-        .call(this.force.drag);
-        // .call(d3.behavior.drag);
-        // .call(function(selection){
-        //   this.force.drag.apply(this, selection);
-        // }.bind(this));
+        .call(this.force.drag().on('dragstart', function(d){
+          d3.event.sourceEvent.stopPropagation();
+        }.bind(this)).on('dragend', function(d){
+          var node = this.model.nodes.findWhere({ id: d.id });
+          node.trigger('clicked', node);
+        }.bind(this)));
 
     d3Util.setStyle(this.linkSVGs, 'dark');
     d3Util.setStyle(this.nodeSVGs, 'dark');

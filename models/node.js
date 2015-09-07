@@ -7,6 +7,9 @@ var Node = Backbone.Model.extend({
     if(! this.get('id') ){
       this.set('id', this.constructor.generateId());
     }
+    this.on('clicked', function(){
+      this.set('clicked', !this.get('clicked'));
+    });
   },
 
   parse: function(json, xhr){
@@ -15,9 +18,9 @@ var Node = Backbone.Model.extend({
   },
 
   validate: function(attrs, options){
-    if(!attrs.id){ 
+    if(!attrs.id){
       // TODO: serialize and incirement id?
-      return Error('Node must have an id'); 
+      return Error('Node must have an id');
     }
   },
 
@@ -67,7 +70,7 @@ var Node = Backbone.Model.extend({
         results = { nodes: [], edges: [] };
     this.set('depth', 0);
     this.set('walked', true);
-    
+
     while( nodeQueue.length > 0 ){
       var node = nodeQueue.shift(),
           currentDepth = node.get('depth');
@@ -75,7 +78,7 @@ var Node = Backbone.Model.extend({
       // walk node
       fn.apply(node, [currentDepth, 'node']);
       results.nodes.push(node);
-      
+
       if(currentDepth === options.depth){
         continue; // reached depth, don't continue to walk edges
       }
@@ -88,7 +91,7 @@ var Node = Backbone.Model.extend({
         fn.apply(edges[i], [currentDepth, 'edge']);
         results.edges.push(edges[i]);
         edges[i].set('walked', true);
-        
+
         // add all of edge's nodes to queue
         node.collection.filter(function(neighborNode){
           return !neighborNode.get('walked') && ( neighborNode.get('id') === edges[i].get('source') || neighborNode.get('id') === edges[i].get('target') );
@@ -102,7 +105,7 @@ var Node = Backbone.Model.extend({
     }
 
     // reset node.walked before exiting
-    function resetWalkedAndDepth(nodeEdge){ 
+    function resetWalkedAndDepth(nodeEdge){
       nodeEdge.set('walked', false);
       nodeEdge.set('depth', null);
     }
