@@ -28,138 +28,66 @@ var GraphView = Backbone.D3View.extend({
     });
     this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
     this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
-
-
-    // setTimeout(function(){
-    //   this.delegate('mouseenter', '.node', function(e){
-    //     console.log(e);
-    //   });
-    // }.bind(this), 0);
-
-    // TODO, rewrite this in D3 (accessing the node's data would be cleaner in D3)
-    // $(this.el).on('mouseenter', '.node', function(e){
-    //   var node = this.model.nodes.get(e.target.__data__.id);
-    //   node.trigger('nodehoverenter', node);
-    //   this.highlightNode(node);
-    // }.bind(this));
-    // $(this.el).on('mouseleave', '.node', function(e){
-    //   var node = this.model.nodes.get(e.target.__data__.id);
-    //   node.trigger('nodehoverleave', node);
-    //   this.removeHighlightNode(node);
-    // }.bind(this));
-
-    //////////////////////////////
-    // this works
-    // setTimeout(function(){
-    //   this.d3el.selectAll('.node')
-    //     .on('mouseenter', function(){
-    //       console.log('mouseenter')
-    //     })
-    // }.bind(this), 2000)
-
-    //////////////////////////////
-    // this doesn't
-    // this.d3el.on('mouseenter', function(){
-    //   // delegate mouseenter event to all nodes
-    //   console.log(d3.event.target.classList);
-    //   var target = d3.event.target;
-    //   d3.select(target).selectAll('.node')
-    //   // if(d3.event.target.tagName === 'circle'){
-    //   //   console.log(this);
-    //   // }
-    // });
-
-    //////////////////////////////
-    // NOR DOES THIS
-    // var delegate = function(el, type, selector, callback){
-    //   el = typeof el === 'string' ? document.querySelector(el) : el;
-    //   if(!el){ return; }
-    //   el.addEventListener(type, function(e){
-    //     var node = e.target;
-    //     while(node && node !== el){
-    //       if(node.matches(selector)){
-    //         callback.call(node, event);
-    //       }
-    //       node = node.parentNode;
-    //     }
-    //   })
-    // };
-    //
-    // delegate(this.el, 'mouseenter', '.node', function(e){
-    //   console.log(e);
-    // });
-
-    //////////////////////////////
-    // NOR DOES THIS
-    // EVENT DELEGATION D3: https://groups.google.com/forum/#!topic/d3-js/lpezER89BOc
-    // delegate an event handler to only fire for specific elements
-    // var delegate = function(target, handler) {
-    //   return function() {
-    //     var evtTarget = d3.event.target;
-    //     if ($(evtTarget).is(target)) {
-    //       handler.call(evtTarget, evtTarget.__data__);
-    //     }
-    //   };
-    // };
-    // // add to selection prototype
-    // d3.selection.prototype.delegate = function(evt, target, handler) {
-    //     return this.on(evt, delegate(handler, target));
-    // };
-
-    // this.d3el.select('g').on('mouseenter', delegate('.node' , function(){
-    //   console.log('mouseenter')
-    // }));
-
   },
 
   graphRenderCallback: function(){
     // called after the graph has been successfully rendered
-    this.delegate('mouseenter', '.node', function(e){
-      var node = this.model.nodes.get(e.target.__data__.id);
+    this.delegate('mouseenter', '.node', function(e,d,i){
+      var node = this.model.nodes.findWhere({ id: d.id });
       node.trigger('nodehoverenter', node);
       this.highlightNode(node);
     }.bind(this));
-    this.delegate('mouseleave', '.node', function(e){
-      var node = this.model.nodes.get(e.target.__data__.id);
+    this.delegate('mouseleave', '.node', function(e,d,i){
+      var node = this.model.nodes.findWhere({ id: d.id });
       node.trigger('nodehoverleave', node);
       this.removeHighlightNode(node);
     }.bind(this));
+
+    this.delegate('mousedown', '.node', function(e,d,i){
+      var node = this.model.nodes.findWhere({id: d.id})
+      node.trigger('nodeclicked', node);
+      this.clickNode(node);
+    }.bind(this));
   },
 
-  highlightNode: function(node){
-    var nodeEl = this.d3el
-      .selectAll('.node')
-      .filter(function(d, i){
-        return d.id === this.id;
-      }.bind(node));
+  clickNode: function(node){
+    node.set('clicked', !node.get('clicked'));
 
-    d3Util.setStyle(nodeEl, 'highlight');
-
-    var edgeEls = this.d3el
-      .selectAll('.link')
-      .filter(function(d, i){
-        return d.source.id === this.id || d.target.id === this.id;
-      }.bind(node));
-
-    d3Util.setStyle(edgeEls, 'highlight');
-  },
-
-  removeHighlightNode: function(node){
-    var nodeEl = this.d3el
-      .selectAll('.node')
+    this.d3el.selectAll('.node')
       .filter(function(d, i){
         return d.id === this.id;
       }.bind(node))
+      .call(d3Util.setStyle, 'highlight');
+  },
 
-    d3Util.setStyle(nodeEl, 'dark');
+  highlightNode: function(node){
+    this.d3el.selectAll('.node')
+      .filter(function(d, i){
+        return d.id === this.id;
+      }.bind(node))
+      .call(d3Util.setStyle, 'highlight')
 
-    var edgeEls = this.d3el
-      .selectAll('.link')
+    this.d3el.selectAll('.link')
       .filter(function(d, i){
         return d.source.id === this.id || d.target.id === this.id;
-      }.bind(node));
+      }.bind(node))
+      .call(d3Util.setStyle, 'highlight');
+  },
 
-    d3Util.setStyle(edgeEls, 'dark');
+  removeHighlightNode: function(node){
+    this.d3el.selectAll('.link')
+      .filter(function(d, i){
+        return d.source.id === this.id || d.target.id === this.id;
+      }.bind(node))
+      .call(d3Util.setStyle, 'dark');
+
+    if(node.get('clicked')){ return; }
+
+    this.d3el.selectAll('.node')
+      .filter(function(d, i){
+        return d.id === this.id;
+      }.bind(node))
+      .call(d3Util.setStyle, 'dark');
   },
 
   buildGraph: function(){
@@ -226,6 +154,10 @@ var GraphView = Backbone.D3View.extend({
     this.nodeSVGs.enter().append("circle")
         .attr("class", "node")
         .call(this.force.drag);
+        // .call(d3.behavior.drag);
+        // .call(function(selection){
+        //   this.force.drag.apply(this, selection);
+        // }.bind(this));
 
     d3Util.setStyle(this.linkSVGs, 'dark');
     d3Util.setStyle(this.nodeSVGs, 'dark');
