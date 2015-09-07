@@ -9,6 +9,7 @@ var Node = Backbone.Model.extend({
     }
     this.on('clicked', function(){
       this.set('clicked', !this.get('clicked'));
+      console.log(this.get('clicked'));
     });
   },
 

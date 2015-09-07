@@ -22,16 +22,16 @@ var NodeListItem = Backbone.D3View.extend({
     }.bind(this));
 
     this.d3el.on('mouseenter', function(){
-      this.model.trigger('lihoverenter', this.model);
+      this.model.trigger('hoverenter', this.model);
     }.bind(this));
 
     this.d3el.on('mouseleave', function(){
-      this.model.trigger('lihoverleave', this.model);
+      this.model.trigger('hoverleave', this.model);
     }.bind(this));
 
     this.listenTo(this.model, 'destroy', this.remove);
-    this.listenTo(this.model, 'nodehoverenter', this.highlightNodeLi)
-    this.listenTo(this.model, 'nodehoverleave', this.removeHighlightNodeLi)
+    this.listenTo(this.model, 'hoverenter', this.highlightNodeLi)
+    this.listenTo(this.model, 'hoverleave', this.removeHighlightNodeLi)
   },
 
   // template: Handlebars.compile( $('#nodeLi').html() ),

@@ -26,22 +26,20 @@ var GraphView = Backbone.D3View.extend({
     this.listenTo(this.model, 'alter', function(){
       this.render();
     });
-    this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
-    this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
+    this.listenTo(this.model.nodes, 'hoverenter', this.highlightNode);
+    this.listenTo(this.model.nodes, 'hoverleave', this.removeHighlightNode);
     this.listenTo(this.model.nodes, 'clicked', this.clickNode);
   },
 
   graphRenderCallback: function(){
     // called after the graph has been successfully rendered
     this.delegate('mouseenter', '.node', function(e,d,i){
-      var node = this.model.nodes.findWhere({ id: d.id });
-      node.trigger('nodehoverenter', node);
-      this.highlightNode(node);
+      var node = this.model.nodes.findWhere({ id: d.id })
+      node.trigger('hoverenter', node);
     }.bind(this));
     this.delegate('mouseleave', '.node', function(e,d,i){
-      var node = this.model.nodes.findWhere({ id: d.id });
-      node.trigger('nodehoverleave', node);
-      this.removeHighlightNode(node);
+      var node = this.model.nodes.findWhere({ id: d.id })
+      node.trigger('hoverleave', node);
     }.bind(this));
 
     this.delegate('mousedown', '.node', function(e,d,i){
@@ -154,8 +152,8 @@ var GraphView = Backbone.D3View.extend({
         .call(this.force.drag().on('dragstart', function(d){
           d3.event.sourceEvent.stopPropagation();
         }.bind(this)).on('dragend', function(d){
-          var node = this.model.nodes.findWhere({ id: d.id });
-          node.trigger('clicked', node);
+          // var node = this.model.nodes.findWhere({ id: d.id });
+          // node.trigger('hoverleave', node);
         }.bind(this)));
 
     d3Util.setStyle(this.linkSVGs, 'dark');
