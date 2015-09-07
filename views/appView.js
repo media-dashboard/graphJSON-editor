@@ -1,12 +1,14 @@
-var $ = require('jquery');
+// var $ = require('jquery');
 var Backbone = require('backbone');
-Backbone.$ = $;
+// Backbone.$ = $;
 var _ = require('underscore');
 var d3 = require('d3');
+require('backbone.d3view');
 var GraphView = require('../views/graphView');
 var SideView = require('../views/sideView');
 
-var AppView = Backbone.View.extend({
+
+var AppView = Backbone.D3View.extend({
   el: '#app',
 
   initialize: function(){
@@ -16,6 +18,9 @@ var AppView = Backbone.View.extend({
   render: function(){
     this.graphView = new GraphView({ model: this.model.graph });
     this.sideView = new SideView({ model: this.model.graph });
+
+    // add graphView to page
+    this.el.appendChild(this.graphView.render());
   }
 });
 

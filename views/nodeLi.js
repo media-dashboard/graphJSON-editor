@@ -1,16 +1,18 @@
 var Backbone = require('backbone');
+var D3View = require('backbone.d3view');
 var _ = require('underscore');
 var d3 = require('d3');
 var Handlebars = require('handlebars');
 var $ = require('jquery');
 
-var NodeListItem = Backbone.View.extend({
+var NodeListItem = Backbone.D3View.extend({
 
   className: 'nodeItem',
 
+  namespace: d3.ns.prefix.xhtml,
+
   initialize: function(){
     this.d3el = d3.select(this.el);
-
     this.d3el.on('click', function(){
       // remove node
       // TODO: hijack BB destroy to destroy model w/o actually syncing w/ server
@@ -32,7 +34,8 @@ var NodeListItem = Backbone.View.extend({
     this.listenTo(this.model, 'nodehoverleave', this.removeHighlightNodeLi)
   },
 
-  template: Handlebars.compile( $('#nodeLi').html() ),
+  // template: Handlebars.compile( $('#nodeLi').html() ),
+  template: _.template('<strong><%= id %></strong> : <em><%= attr %></em>'),
 
   highlightNodeLi: function(node){
     this.d3el.classed('hover', true);

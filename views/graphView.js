@@ -1,21 +1,20 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
-var $ = require('jquery');
+// var $ = require('jquery');
 var d3Util = require('../utils/d3_utils');
 
-var GraphView = Backbone.View.extend({
+var GraphView = Backbone.D3View.extend({
   el: '#graph',
 
   initialize: function(){
     this.highlightDiffusion = 2;
-    this.d3el = d3.select(this.el);
     this.buildGraph();
 
     this.listenTo(this.model, 'sync', function(graph, json, options){
-      if( options.loading ){ 
-        this.clearGraph(); 
-        this.render(); 
+      if( options.loading ){
+        this.clearGraph();
+        this.render();
       }
     });
     this.listenTo(this.model.nodes, 'add', function(){
@@ -30,17 +29,21 @@ var GraphView = Backbone.View.extend({
     this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
     this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
 
+    this.delegate('mouseenter', 'circle', function(e){
+      console.log(e);
+    });
+
     // TODO, rewrite this in D3 (accessing the node's data would be cleaner in D3)
-    this.$el.on('mouseenter', '.node', function(e){
-      var node = this.model.nodes.get(e.target.__data__.id);
-      node.trigger('nodehoverenter', node);
-      this.highlightNode(node);
-    }.bind(this));
-    this.$el.on('mouseleave', '.node', function(e){
-      var node = this.model.nodes.get(e.target.__data__.id);
-      node.trigger('nodehoverleave', node);
-      this.removeHighlightNode(node);
-    }.bind(this));
+    // this.$el.on('mouseenter', '.node', function(e){
+    //   var node = this.model.nodes.get(e.target.__data__.id);
+    //   node.trigger('nodehoverenter', node);
+    //   this.highlightNode(node);
+    // }.bind(this));
+    // this.$el.on('mouseleave', '.node', function(e){
+    //   var node = this.model.nodes.get(e.target.__data__.id);
+    //   node.trigger('nodehoverleave', node);
+    //   this.removeHighlightNode(node);
+    // }.bind(this));
 
     //////////////////////////////
     // this works
@@ -99,7 +102,7 @@ var GraphView = Backbone.View.extend({
     // d3.selection.prototype.delegate = function(evt, target, handler) {
     //     return this.on(evt, delegate(handler, target));
     // };
-  
+
     // this.d3el.select('g').on('mouseenter', delegate('.node' , function(){
     //   console.log('mouseenter')
     // }));
@@ -152,7 +155,7 @@ var GraphView = Backbone.View.extend({
       .append('svg')
       .attr({
         'class': 'svgraph',
-        'viewBox': "0 0 1000 1000", 
+        'viewBox': "0 0 1000 1000",
         'preserveAspectRatio': "xMinYMin meet"
       });
 
@@ -165,7 +168,7 @@ var GraphView = Backbone.View.extend({
 
     this.force = d3.layout.force()
       .size([
-        parseInt(this.DIMENSIONS.width), 
+        parseInt(this.DIMENSIONS.width),
         parseInt(this.DIMENSIONS.height)
       ])
       .linkStrength(0.1)
@@ -216,7 +219,7 @@ var GraphView = Backbone.View.extend({
 
     this.linkSVGs.exit().remove();
     this.nodeSVGs.exit().remove();
-    
+
 
 
     // Initialize all nodes' location to the center of the graph window
@@ -238,7 +241,7 @@ var GraphView = Backbone.View.extend({
         ['x', 'y', 'px', 'py', 'fixed', 'weight'].forEach(function(attr){
           var nodeModel = this.model.nodes.findWhere( {id: node.id} ).set(attr, node[attr]);
         }, this);
-        
+
       }, this)
     }.bind(this));
 

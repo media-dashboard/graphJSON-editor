@@ -1,11 +1,14 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
+// var $ = require('jQuery');
 
 var NodeListItem = require('../views/nodeLi');
 
-var SideView = Backbone.View.extend({
+var SideView = Backbone.D3View.extend({
   el: '#sidebar',
+
+  namespace: d3.ns.prefix.xhtml,
 
   initialize: function(){
     // for debugging
@@ -19,9 +22,10 @@ var SideView = Backbone.View.extend({
 
   render: function(){
     this.model.nodes.forEach(function(node){
-      // TODO: handle views via D3
-      // this.d3el.select('#graph-elements').append( new NodeListItem({ model: node }) );
-      this.$el.append( new NodeListItem({ model: node }).render() );
+      this.d3el.select('#graph-elements').select(function(){
+        // appending html elements that already exist is tricky: https://groups.google.com/forum/#!topic/d3-js/AsbOTQskipU
+        return this.appendChild( new NodeListItem({ model: node }).render() );
+      });
     }, this);
 
     return this.el;
