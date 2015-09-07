@@ -20,7 +20,8 @@ var AppView = Backbone.D3View.extend({
     this.sideView = new SideView({ model: this.model.graph });
 
     // add graphView to page
-    this.el.appendChild(this.graphView.render());
+
+    this.el.querySelector('#graph').appendChild(this.graphView.render());
   }
 });
 

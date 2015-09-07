@@ -1,11 +1,11 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
-// var $ = require('jquery');
+var $ = require('jquery');
 var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.D3View.extend({
-  el: '#graph',
+  tagName: 'svg',
 
   initialize: function(){
     this.highlightDiffusion = 2;
@@ -29,17 +29,20 @@ var GraphView = Backbone.D3View.extend({
     this.listenTo(this.model.nodes, 'lihoverenter', this.highlightNode);
     this.listenTo(this.model.nodes, 'lihoverleave', this.removeHighlightNode);
 
-    this.delegate('mouseenter', 'circle', function(e){
-      console.log(e);
-    });
+
+    // setTimeout(function(){
+    //   this.delegate('mouseenter', '.node', function(e){
+    //     console.log(e);
+    //   });
+    // }.bind(this), 0);
 
     // TODO, rewrite this in D3 (accessing the node's data would be cleaner in D3)
-    // this.$el.on('mouseenter', '.node', function(e){
+    // $(this.el).on('mouseenter', '.node', function(e){
     //   var node = this.model.nodes.get(e.target.__data__.id);
     //   node.trigger('nodehoverenter', node);
     //   this.highlightNode(node);
     // }.bind(this));
-    // this.$el.on('mouseleave', '.node', function(e){
+    // $(this.el).on('mouseleave', '.node', function(e){
     //   var node = this.model.nodes.get(e.target.__data__.id);
     //   node.trigger('nodehoverleave', node);
     //   this.removeHighlightNode(node);
@@ -109,6 +112,20 @@ var GraphView = Backbone.D3View.extend({
 
   },
 
+  graphRenderCallback: function(){
+    // called after the graph has been successfully rendered
+    this.delegate('mouseenter', '.node', function(e){
+      var node = this.model.nodes.get(e.target.__data__.id);
+      node.trigger('nodehoverenter', node);
+      this.highlightNode(node);
+    }.bind(this));
+    this.delegate('mouseleave', '.node', function(e){
+      var node = this.model.nodes.get(e.target.__data__.id);
+      node.trigger('nodehoverleave', node);
+      this.removeHighlightNode(node);
+    }.bind(this));
+  },
+
   highlightNode: function(node){
     var nodeEl = this.d3el
       .selectAll('.node')
@@ -151,20 +168,16 @@ var GraphView = Backbone.D3View.extend({
       width: d3.select('#graph').style('width')
     };
 
-    this.svg = this.d3el
-      .append('svg')
-      .attr({
-        'class': 'svgraph',
-        'viewBox': "0 0 1000 1000",
-        'preserveAspectRatio': "xMinYMin meet"
-      });
-
-    this.svg.append("g");
+    this.d3el.attr({
+      'class': 'svgraph',
+      'viewBox': "0 0 1000 1000",
+      'preserveAspectRatio': "xMinYMin meet"
+    }).append("g");
 
     var zoom = d3.behavior.zoom()
         .scaleExtent([0.1, 6])
-        .on("zoom", d3Util.zoom.bind(this.svg.select('g')) );
-    this.svg.call(zoom);
+        .on("zoom", d3Util.zoom.bind(this.d3el.select('g')) );
+    this.d3el.call(zoom);
 
     this.force = d3.layout.force()
       .size([
@@ -244,6 +257,8 @@ var GraphView = Backbone.D3View.extend({
 
       }, this)
     }.bind(this));
+
+    this.graphRenderCallback();
 
     return this.el;
   },
