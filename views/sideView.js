@@ -1,7 +1,6 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
-// var $ = require('jQuery');
 
 var NodeListItem = require('../views/nodeLi');
 

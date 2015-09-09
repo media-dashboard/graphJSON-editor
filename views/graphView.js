@@ -1,7 +1,6 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var d3 = require('d3');
-var $ = require('jquery');
 var d3Util = require('../utils/d3_utils');
 
 var GraphView = Backbone.D3View.extend({
@@ -30,41 +29,20 @@ var GraphView = Backbone.D3View.extend({
     this.listenTo(this.model.nodes, 'hoverleave', this.removeHighlightNode);
     this.listenTo(this.model.nodes, 'clicked', this.clickNode);
 
-    // this.delegate('mouseenter', '.node', function(e,d,i){
-    //   console.log(e.target);
-      // var node = this.model.nodes.findWhere({ id: d.id })
-      // node.trigger('hoverenter', node);
-    // }.bind(this));
-    // this.delegate('mouseleave', '.node', function(e,d,i){
-      // var node = this.model.nodes.findWhere({ id: d.id })
-      // node.trigger('hoverleave', node);
-    // }.bind(this));
 
-    // this.delegate('mousedown', '.node', function(e,d,i){
-    //   var node = this.model.nodes.findWhere({id: d.id})
-    //   var node = node.trigger('clicked', node);
-    // }.bind(this));
+    this.delegate('mouseover', '.node', function(e,d,i){
+      var node = this.model.nodes.findWhere({ id: d.id })
+      node.trigger('hoverenter', node);
+    }.bind(this));
+    this.delegate('mouseout', '.node', function(e,d,i){
+      var node = this.model.nodes.findWhere({ id: d.id })
+      node.trigger('hoverleave', node);
+    }.bind(this));
+
     this.delegate('click', '.node', function(e,d,i){
       var node = this.model.nodes.findWhere({id: d.id})
       var node = node.trigger('clicked', node);
     }.bind(this));
-  },
-
-  graphRenderCallback: function(){
-    // called after the graph has been successfully rendered
-    // this.delegate('mouseenter', '.node', function(e,d,i){
-    //   var node = this.model.nodes.findWhere({ id: d.id })
-    //   node.trigger('hoverenter', node);
-    // }.bind(this));
-    // this.delegate('mouseleave', '.node', function(e,d,i){
-    //   var node = this.model.nodes.findWhere({ id: d.id })
-    //   node.trigger('hoverleave', node);
-    // }.bind(this));
-
-    // this.delegate('mousedown', '.node', function(e,d,i){
-    //   var node = this.model.nodes.findWhere({id: d.id})
-    //   var node = node.trigger('clicked', node);
-    // }.bind(this));
   },
 
   clickNode: function(node){
@@ -205,8 +183,6 @@ var GraphView = Backbone.D3View.extend({
 
       }, this)
     }.bind(this));
-
-    this.graphRenderCallback();
 
     return this.el;
   },

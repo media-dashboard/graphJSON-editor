@@ -3,7 +3,6 @@ var D3View = require('backbone.d3view');
 var _ = require('underscore');
 var d3 = require('d3');
 var Handlebars = require('handlebars');
-var $ = require('jquery');
 
 var NodeListItem = Backbone.D3View.extend({
 

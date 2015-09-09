@@ -1,6 +1,4 @@
-// var $ = require('jquery');
 var Backbone = require('backbone');
-// Backbone.$ = $;
 var _ = require('underscore');
 var d3 = require('d3');
 require('backbone.d3view');
