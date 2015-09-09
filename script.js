@@ -1,5 +1,4 @@
 var _ = require('underscore');
-var $ = require('jquery');
 var Graph = require('./models/graph');
 var Node = require('./models/node');
 var Edge = require('./models/edge');
@@ -12,7 +11,6 @@ var AppView = require('./views/appView');
 _.extend(window, {
   appView: new AppView({ model: new App() }),
   _: _,
-  $:$, 
   Node: Node,
   Edge: Edge,
   Graph: Graph,

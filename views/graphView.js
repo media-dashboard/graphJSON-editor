@@ -31,18 +31,17 @@ var GraphView = Backbone.D3View.extend({
 
 
     this.delegate('mouseover', '.node', function(e,d,i){
-      var node = this.model.nodes.findWhere({ id: d.id })
+      var node = this.model.nodes.findWhere({ id: d.id });
       node.trigger('hoverenter', node);
-    }.bind(this));
+    });
     this.delegate('mouseout', '.node', function(e,d,i){
-      var node = this.model.nodes.findWhere({ id: d.id })
+      var node = this.model.nodes.findWhere({ id: d.id });
       node.trigger('hoverleave', node);
-    }.bind(this));
-
+    });
     this.delegate('click', '.node', function(e,d,i){
-      var node = this.model.nodes.findWhere({id: d.id})
+      var node = this.model.nodes.findWhere({id: d.id});
       var node = node.trigger('clicked', node);
-    }.bind(this));
+    });
   },
 
   clickNode: function(node){
@@ -162,7 +161,6 @@ var GraphView = Backbone.D3View.extend({
 
 
     // Initialize all nodes' location to the center of the graph window
-    // Why in the fuck doesn't this work?
     // nodes.forEach(function(d, i){
     //   d.x = 0; //svgCenterX;
     //   d.y = 0; //svgCenterY;

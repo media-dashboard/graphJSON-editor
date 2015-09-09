@@ -11,6 +11,8 @@ var AppView = Backbone.D3View.extend({
 
   initialize: function(){
     this.render();
+    // offset top positioning to height of header
+    // this.d3el.style({ 'top': d3.select('header').node().getBoundingClientRect().height });
   },
 
   render: function(){

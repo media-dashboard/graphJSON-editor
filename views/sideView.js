@@ -21,7 +21,7 @@ var SideView = Backbone.D3View.extend({
 
   render: function(){
     this.model.nodes.forEach(function(node){
-      this.d3el.select('#graph-elements').select(function(){
+      this.d3el.select('#graph-list').select(function(){
         // appending html elements that already exist is tricky: https://groups.google.com/forum/#!topic/d3-js/AsbOTQskipU
         return this.appendChild( new NodeListItem({ model: node }).render() );
       });

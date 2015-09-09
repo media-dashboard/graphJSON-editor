@@ -1,58 +1,3 @@
-@import url(http://fonts.googleapis.com/css?family=Lato:300,400,300italic);
-
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-  display: block;
-}
-body {
-  line-height: 1;
-}
-ol, ul {
-  list-style: none;
-}
-blockquote, q {
-  quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-
-/***************************************************/
-/***************************************************/
-/***************************************************/
 html {
   font-size: 14px;
 }
@@ -66,21 +11,33 @@ body {
   font-weight: 200;
 }
 
-#app, #graph, #sidebar {
+h1 { font-size: 2.6rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.2rem; }
+
+header {
+  height: 40px;
+  border-bottom: 1px solid #DDD;
+  background-color: #FAFAFA;
+}
+
+#app {
   position: absolute;
-  top: 0;
+  top: 40px;
   bottom: 0;
+  width: 100%;
   }
-  #app {
-    left: 0;
-    width: 100%;
+  #graph, #sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
   }
   #graph {
     left: 0;
     width: 70%;
     /*padding-bottom: 100%;*/
-    vertical-align: middle; 
-    overflow: hidden; 
+    vertical-align: middle;
+    overflow: hidden;
   }
   #sidebar {
     right: 0;
@@ -90,15 +47,26 @@ body {
 
 #sidebar {
   }
-  .nodeItem {
-    margin-right: 38px;
-    margin-left: 8px;
+  ul#nav li {
+    padding: 12px;
+  }
+  ul#graph-list {
+    margin: 0;
+  }
+  li.node-li {
     padding: 6px;
     border-bottom: 1px solid #DDD;
+    list-style: none;
   }
-  .nodeItem:hover,
-  .nodeItem.hover {
-    background-color: #FFF0F1;
+  .node-li:hover,
+  .node-li.hover {
+    background-color: #FAFAFA;
+  }
+  .node-li .dropdown {
+    display: none;
+  }
+  .node-li.expand .dropdown {
+    display: block;
   }
 
 svg.svgraph {

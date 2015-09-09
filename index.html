@@ -11,11 +11,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <div class="row">
+      <div class="columns small-12">
+        <h2 class="text-center">GraphJSON.io</h2>
+      </div>
+    </div>
+  </header>
+
   <div id="app">
-    <header>
-
-    </header>
-
     <div id="graph"></div>
 
     <div id="sidebar">
@@ -25,8 +29,16 @@
           <li class="text-center"><a href="#">Edges</a></li>
         </ul>
 
-        <div id="graph-elements">
-        </div>
+        <ul id="graph-list">
+          <script id="node-li" type="text/template">
+            <div class="header">
+              <strong><%= id %></strong> : <em><%= name %></em>
+            </div>
+            <div class="dropdown clearfix">
+              <i class="remove right">X</i>
+            </div>
+          </script>
+        </ul>
       </div>
     </div>
 

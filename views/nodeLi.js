@@ -6,13 +6,18 @@ var Handlebars = require('handlebars');
 
 var NodeListItem = Backbone.D3View.extend({
 
-  className: 'nodeItem',
+  tagName: 'li',
+
+  className: 'node-li',
 
   namespace: d3.ns.prefix.xhtml,
 
   initialize: function(){
     this.d3el = d3.select(this.el);
     this.d3el.on('click', function(){
+      this.d3el.classed('expand', !this.d3el.classed('expand'));
+    }.bind(this));
+    this.d3el.select('i.remove').on('click', function(){
       // remove node
       // TODO: hijack BB destroy to destroy model w/o actually syncing w/ server
         // possibly by setting model.isNew = true
@@ -34,7 +39,7 @@ var NodeListItem = Backbone.D3View.extend({
   },
 
   // template: Handlebars.compile( $('#nodeLi').html() ),
-  template: _.template('<strong><%= id %></strong> : <em><%= attr %></em>'),
+  template: _.template(d3.select('#node-li').html()),
 
   highlightNodeLi: function(node){
     this.d3el.classed('hover', true);
@@ -45,7 +50,7 @@ var NodeListItem = Backbone.D3View.extend({
   },
 
   render: function(){
-    var listItem = this.template({ id: this.model.id, attr: this.model.get('name') });
+    var listItem = this.template(this.model.toJSON());
     // TODO: replace d3el.html(...) w/ d3 templating fn
     this.d3el.html(listItem);
     return this.el;
