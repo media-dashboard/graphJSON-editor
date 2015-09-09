@@ -14,6 +14,10 @@
     * delete all models/views that have been removed
   * model.remove() // temporarily remove model's view DOM element, but don't delete the model
 
+* D3Views
+  * Do nodes/edges get their own views? (currently, their wrapped up in the graphView)
+  * how to associate D3 DOM data with model data
+
 ```
 script.js
   |
