@@ -18,7 +18,7 @@
   "homepage": "https://github.com/jameslaneconkling/happyClassroom#readme",
   "dependencies": {
     "backbone": "^1.2.1",
-    "backbone.d3view": "^0.2.0",
+    "backbone.d3view": "^0.3.0",
     "browserify": "^11.0.1",
     "d3": "^3.5.6",
     "handlebars": "^4.0.2",
