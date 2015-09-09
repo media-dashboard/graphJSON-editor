@@ -1,4 +1,6 @@
-##
+## Graph.io
+
+*for lack of a better name*
 
 A reusable graph visualization and editing tool built on Backbone.
 
